@@ -1,0 +1,13 @@
+venv/
+__pycache__/
+.env
+*.db
+*.log
+frontend/node_modules/
+frontend/.next/
+backend/__pycache__/
+
+# Migration scripts with secrets
+backend/create_missing_tables.py
+backend/generate_migration_sql.py
+backend/run_supabase_migration.py

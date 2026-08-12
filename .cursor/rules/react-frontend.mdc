@@ -1,0 +1,76 @@
+---
+description: Next.js 14 and React patterns for GoTrading frontend development
+globs: gotrading/frontend/**/*.tsx
+alwaysApply: false
+---
+
+# React Frontend Conventions
+
+## Client Components
+
+Add `"use client"` directive for components using hooks, state, or browser APIs:
+
+```tsx
+"use client";
+
+import { useState } from 'react';
+// ...
+```
+
+## Import Patterns
+
+Use `@/` path alias:
+
+```tsx
+import { api } from '@/lib/api';
+import { useStrategies } from '@/hooks/use-api';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+```
+
+## File Naming
+
+| Type | Pattern | Example |
+|------|---------|---------|
+| Pages | `app/{route}/page.tsx` | `app/strategies/[id]/page.tsx` |
+| Components | kebab-case | `strategy-builder.tsx` |
+| Hooks | `use-{name}.ts` | `use-api.ts` |
+
+## Component Structure
+
+```tsx
+"use client";
+
+import { useQuery } from '@tanstack/react-query';
+import { api } from '@/lib/api';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+
+export function StrategyCard({ id }: { id: string }) {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['strategies', id],
+    queryFn: () => api.getStrategy(id),
+  });
+
+  if (isLoading) return <Skeleton className="h-32" />;
+  if (error) return <div>Error loading strategy</div>;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{data.name}</CardTitle>
+      </CardHeader>
+      <CardContent>{/* ... */}</CardContent>
+    </Card>
+  );
+}
+```
+
+## Styling
+
+- Dark theme by default
+- Fintech color semantics:
+  - Green (`text-green-500`): Profit, success, buy
+  - Red (`text-red-500`): Loss, error, sell
+- Use Tailwind utilities, avoid inline styles
+- shadcn/ui components from `@/components/ui/`

@@ -1,0 +1,57 @@
+---
+description: Ensures edits target the correct frontend directory in GoTrading monorepo
+alwaysApply: true
+---
+
+# Frontend Target Rules
+
+## Directory Purpose
+
+| Directory | Status | Action |
+|-----------|--------|--------|
+| `gotrading/frontend/` | **PRODUCTION** | Always edit here |
+| `algo-desk-central/` | Read-only reference | Never edit |
+| `gotrading/frontend_new/` | Deprecated | Never edit |
+
+## Rules
+
+### ALWAYS Edit `gotrading/frontend/`
+This is the production Next.js 14 application. All UI work happens here.
+
+### NEVER Edit `algo-desk-central/`
+This is a Lovable-generated reference UI. It syncs from GitHub and should be treated as read-only.
+
+Use it only as a reference when:
+- Porting components via ui-migration agent
+- Checking original Lovable implementations
+- Comparing design patterns
+
+### NEVER Edit `gotrading/frontend_new/`
+This is a deprecated scaffold. Ignore it completely.
+
+## Migration Workflow
+
+When porting from `algo-desk-central` to `gotrading/frontend`:
+
+1. **Read** source from `algo-desk-central/src/components/`
+2. **Adapt** Tailwind v4 → v3 syntax
+3. **Write** to `gotrading/frontend/src/components/`
+4. **Update** `memory-bank/progress.md`
+
+## Quick Reference
+
+```
+# Correct paths for common operations
+
+# UI Components
+gotrading/frontend/src/components/
+
+# Pages
+gotrading/frontend/src/app/
+
+# API Hooks
+gotrading/frontend/src/hooks/
+
+# API Client
+gotrading/frontend/src/lib/api.ts
+```

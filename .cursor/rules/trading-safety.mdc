@@ -1,0 +1,82 @@
+---
+description: Critical safety rules for trading engine code - prevents financial losses from software bugs
+globs: gotrading/backend/engine/**/*.py
+alwaysApply: false
+---
+
+# Trading Safety Rules
+
+## CRITICAL: Fail Closed
+
+Risk checks MUST fail closed — reject orders on any exception:
+
+```python
+# ✅ CORRECT - fail closed
+def check_risk(order: Order) -> bool:
+    try:
+        if order.quantity > self.max_position:
+            return False
+        if self.daily_loss > self.max_daily_loss:
+            return False
+        return True
+    except Exception as e:
+        logger.error(f"Risk check failed: {e}")
+        return False  # REJECT on error
+
+# ❌ WRONG - fail open (DANGEROUS)
+def check_risk(order: Order) -> bool:
+    try:
+        # checks...
+        return True
+    except Exception:
+        return True  # NEVER do this
+```
+
+## Order State Machine
+
+Validate order state transitions explicitly:
+
+```python
+VALID_TRANSITIONS = {
+    'pending': ['submitted', 'cancelled'],
+    'submitted': ['filled', 'partial', 'rejected', 'cancelled'],
+    'partial': ['filled', 'cancelled'],
+    'filled': [],  # Terminal state
+    'rejected': [],  # Terminal state
+    'cancelled': [],  # Terminal state
+}
+
+def transition_order(order: Order, new_status: str):
+    if new_status not in VALID_TRANSITIONS[order.status]:
+        raise InvalidTransitionError(f"{order.status} -> {new_status}")
+    order.status = new_status
+```
+
+## Logging Requirements
+
+Log ALL order lifecycle events with timestamps:
+
+```python
+logger.info(f"ORDER_CREATED id={order.id} symbol={order.symbol} qty={order.quantity}")
+logger.info(f"ORDER_SUBMITTED id={order.id} broker={broker.name}")
+logger.info(f"ORDER_FILLED id={order.id} fill_price={price} fill_qty={qty}")
+```
+
+## Circuit Breaker
+
+Activate and notify immediately on anomalies:
+
+```python
+if daily_loss > max_daily_loss:
+    self.circuit_breaker = True
+    self.cancel_all_pending_orders()
+    notify_user("CIRCUIT BREAKER ACTIVATED: Daily loss limit exceeded")
+    logger.critical("Circuit breaker activated")
+```
+
+## Prohibited Patterns
+
+- **NO auto-retry** of failed orders without human approval
+- **NO silent exception swallowing** in trading code
+- **NO hardcoded** position limits — always configurable
+- **NO bypass** of risk checks for any reason

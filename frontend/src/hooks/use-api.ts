@@ -1,0 +1,742 @@
+'use client';
+
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { api } from '@/lib/api';
+import type { Strategy, RiskSettings, NotificationSettings, BrokerRiskSettings, Webhook, ApiKey } from '@/lib/api';
+
+// Dashboard hooks
+export function useDashboardTotals() {
+  return useQuery({
+    queryKey: ['dashboard', 'totals'],
+    queryFn: api.getDashboardTotals,
+    refetchInterval: 5000,
+  });
+}
+
+export function useEquityCurve(range: string = '3M') {
+  return useQuery({
+    queryKey: ['dashboard', 'equity-curve', range],
+    queryFn: () => api.getEquityCurve(range),
+  });
+}
+
+export function useIntradayCurve() {
+  return useQuery({
+    queryKey: ['dashboard', 'intraday-curve'],
+    queryFn: api.getIntradayCurve,
+    refetchInterval: 30000,
+  });
+}
+
+export function usePnlByStrategy() {
+  return useQuery({
+    queryKey: ['dashboard', 'pnl-by-strategy'],
+    queryFn: api.getPnlByStrategy,
+    refetchInterval: 10000,
+  });
+}
+
+export function useAllocation() {
+  return useQuery({
+    queryKey: ['dashboard', 'allocation'],
+    queryFn: api.getAllocation,
+  });
+}
+
+export function useTopMovers() {
+  return useQuery({
+    queryKey: ['dashboard', 'top-movers'],
+    queryFn: api.getTopMovers,
+    refetchInterval: 5000,
+  });
+}
+
+// Strategy hooks
+export function useStrategies() {
+  return useQuery({
+    queryKey: ['strategies'],
+    queryFn: api.getStrategies,
+    refetchInterval: 10000,
+  });
+}
+
+export function useStrategy(id: string) {
+  return useQuery({
+    queryKey: ['strategies', id],
+    queryFn: () => api.getStrategy(id),
+    enabled: !!id,
+  });
+}
+
+export function useStrategyPositions(id: string) {
+  return useQuery({
+    queryKey: ['strategies', id, 'positions'],
+    queryFn: () => api.getStrategyPositions(id),
+    enabled: !!id,
+    refetchInterval: 5000,
+  });
+}
+
+export function useStrategyOrders(id: string) {
+  return useQuery({
+    queryKey: ['strategies', id, 'orders'],
+    queryFn: () => api.getStrategyOrders(id),
+    enabled: !!id,
+    refetchInterval: 5000,
+  });
+}
+
+export function useCreateStrategy() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.createStrategy,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['strategies'] });
+    },
+  });
+}
+
+export function useUpdateStrategy() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<Strategy> }) =>
+      api.updateStrategy(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['strategies'] });
+    },
+  });
+}
+
+export function useDeleteStrategy() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.deleteStrategy,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['strategies'] });
+    },
+  });
+}
+
+export function useStartStrategy() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.startStrategy,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['strategies'] });
+    },
+  });
+}
+
+export function usePauseStrategy() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.pauseStrategy,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['strategies'] });
+    },
+  });
+}
+
+export function useStopStrategy() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.stopStrategy,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['strategies'] });
+    },
+  });
+}
+
+// Position hooks
+export function usePositions() {
+  return useQuery({
+    queryKey: ['positions'],
+    queryFn: api.getPositions,
+    refetchInterval: 5000,
+  });
+}
+
+export function useSquareOffPosition() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.squareOffPosition,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['positions'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+    },
+  });
+}
+
+// Order hooks
+export function useOrders() {
+  return useQuery({
+    queryKey: ['orders'],
+    queryFn: api.getOrders,
+    refetchInterval: 5000,
+  });
+}
+
+// Broker hooks
+export function useBrokers() {
+  return useQuery({
+    queryKey: ['brokers'],
+    queryFn: api.getBrokers,
+  });
+}
+
+export function useBroker(id: string) {
+  return useQuery({
+    queryKey: ['brokers', id],
+    queryFn: () => api.getBroker(id),
+    enabled: !!id,
+    refetchInterval: 10000,
+  });
+}
+
+export function useBrokerMarginHistory(id: string) {
+  return useQuery({
+    queryKey: ['brokers', id, 'margin-history'],
+    queryFn: () => api.getBrokerMarginHistory(id),
+    enabled: !!id,
+  });
+}
+
+export function useBrokerStrategies(id: string) {
+  return useQuery({
+    queryKey: ['brokers', id, 'strategies'],
+    queryFn: () => api.getBrokerStrategies(id),
+    enabled: !!id,
+    refetchInterval: 10000,
+  });
+}
+
+export function useBrokerOrders(id: string) {
+  return useQuery({
+    queryKey: ['brokers', id, 'orders'],
+    queryFn: () => api.getBrokerOrders(id),
+    enabled: !!id,
+    refetchInterval: 5000,
+  });
+}
+
+export function useBrokerPositions(id: string) {
+  return useQuery({
+    queryKey: ['brokers', id, 'positions'],
+    queryFn: () => api.getBrokerPositions(id),
+    enabled: !!id,
+    refetchInterval: 5000,
+  });
+}
+
+export function useReauthenticateBroker() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.reauthenticateBroker,
+    onSuccess: (_data, id) => {
+      queryClient.invalidateQueries({ queryKey: ['brokers', id] });
+      queryClient.invalidateQueries({ queryKey: ['brokers'] });
+    },
+  });
+}
+
+export function useDisconnectBroker() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.disconnectBroker,
+    onSuccess: (_data, id) => {
+      queryClient.invalidateQueries({ queryKey: ['brokers', id] });
+      queryClient.invalidateQueries({ queryKey: ['brokers'] });
+    },
+  });
+}
+
+export function useAddBroker() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.addBroker,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['brokers'] });
+    },
+  });
+}
+
+export function useTestBroker() {
+  return useMutation({
+    mutationFn: api.testBroker,
+  });
+}
+
+export function useDeleteBroker() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.deleteBroker,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['brokers'] });
+    },
+  });
+}
+
+// Log hooks
+export function useLogs(filters?: { level?: string; source?: string; strategy_id?: string }) {
+  return useQuery({
+    queryKey: ['logs', filters],
+    queryFn: () => api.getLogs(filters),
+    refetchInterval: 5000,
+  });
+}
+
+export function useUpdateBrokerSettings() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: BrokerRiskSettings }) =>
+      api.updateBrokerSettings(id, data),
+    onSuccess: (_data, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ['brokers', id] });
+      queryClient.invalidateQueries({ queryKey: ['brokers'] });
+    },
+  });
+}
+
+// Risk hooks
+export function useRiskSettings() {
+  return useQuery({
+    queryKey: ['risk', 'settings'],
+    queryFn: api.getRiskSettings,
+  });
+}
+
+export function useUpdateRiskSettings() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.updateRiskSettings,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['risk'] });
+    },
+  });
+}
+
+export function useEmergencyStop() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.emergencyStop,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['strategies'] });
+      queryClient.invalidateQueries({ queryKey: ['positions'] });
+    },
+  });
+}
+
+// Notification hooks
+export function useNotifications(filters?: { category?: string; unread_only?: boolean }) {
+  return useQuery({
+    queryKey: ['notifications', filters],
+    queryFn: () => api.getNotifications(filters),
+    refetchInterval: 30000,
+  });
+}
+
+export function useUnreadCount() {
+  return useQuery({
+    queryKey: ['notifications', 'unread-count'],
+    queryFn: api.getUnreadCount,
+    refetchInterval: 30000,
+  });
+}
+
+export function useMarkNotificationRead() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.markNotificationRead,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+    },
+  });
+}
+
+export function useMarkAllNotificationsRead() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.markAllNotificationsRead,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+    },
+  });
+}
+
+export function useNotificationSettings() {
+  return useQuery({
+    queryKey: ['notifications', 'settings'],
+    queryFn: api.getNotificationSettings,
+  });
+}
+
+export function useUpdateNotificationSettings() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.updateNotificationSettings,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications', 'settings'] });
+    },
+  });
+}
+
+// Profile hooks
+export function useProfile() {
+  return useQuery({
+    queryKey: ['profile'],
+    queryFn: api.getProfile,
+  });
+}
+
+export function useUpdateProfile() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.updateProfile,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+    },
+  });
+}
+
+export function useChangePassword() {
+  return useMutation({
+    mutationFn: api.changePassword,
+  });
+}
+
+export function usePreferences() {
+  return useQuery({
+    queryKey: ['profile', 'preferences'],
+    queryFn: api.getPreferences,
+  });
+}
+
+export function useUpdatePreferences() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.updatePreferences,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile', 'preferences'] });
+    },
+  });
+}
+
+export function useSetup2FA() {
+  return useMutation({
+    mutationFn: api.setup2FA,
+  });
+}
+
+export function useVerify2FA() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.verify2FA,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+    },
+  });
+}
+
+export function useDisable2FA() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.disable2FA,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+    },
+  });
+}
+
+export function useApiUsage() {
+  return useQuery({
+    queryKey: ['profile', 'api-usage'],
+    queryFn: api.getApiUsage,
+  });
+}
+
+export function useSessions() {
+  return useQuery({
+    queryKey: ['profile', 'sessions'],
+    queryFn: api.getSessions,
+  });
+}
+
+export function useRevokeSession() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.revokeSession,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile', 'sessions'] });
+    },
+  });
+}
+
+// Market hooks
+export function useMarketStats() {
+  return useQuery({
+    queryKey: ['market', 'stats'],
+    queryFn: api.getMarketStats,
+    refetchInterval: 5000,
+  });
+}
+
+export function useMarketIndices() {
+  return useQuery({
+    queryKey: ['market', 'indices'],
+    queryFn: api.getMarketIndices,
+    refetchInterval: 5000,
+  });
+}
+
+// Portfolio hooks
+export function useHoldings() {
+  return useQuery({
+    queryKey: ['portfolio', 'holdings'],
+    queryFn: api.getHoldings,
+    refetchInterval: 30000,
+  });
+}
+
+export function usePortfolioSummary() {
+  return useQuery({
+    queryKey: ['portfolio', 'summary'],
+    queryFn: api.getPortfolioSummary,
+    refetchInterval: 30000,
+  });
+}
+
+export function useSectorAllocation() {
+  return useQuery({
+    queryKey: ['portfolio', 'sectors'],
+    queryFn: api.getSectorAllocation,
+  });
+}
+
+export function useNetWorthHistory(range?: string) {
+  return useQuery({
+    queryKey: ['portfolio', 'net-worth-history', range],
+    queryFn: () => api.getNetWorthHistory(range),
+  });
+}
+
+export function useBrokerCapital() {
+  return useQuery({
+    queryKey: ['portfolio', 'broker-capital'],
+    queryFn: api.getBrokerCapital,
+  });
+}
+
+// Reports hooks
+export function useReportsSummary(period?: string) {
+  return useQuery({
+    queryKey: ['reports', 'summary', period],
+    queryFn: () => api.getReportsSummary(period),
+  });
+}
+
+export function useDailyPnl(limit?: number) {
+  return useQuery({
+    queryKey: ['reports', 'daily', limit],
+    queryFn: () => api.getDailyPnl(limit),
+  });
+}
+
+export function useMonthlyPnl(year?: number) {
+  return useQuery({
+    queryKey: ['reports', 'monthly', year],
+    queryFn: () => api.getMonthlyPnl(year),
+  });
+}
+
+export function usePnlByStrategyReport(period?: string) {
+  return useQuery({
+    queryKey: ['reports', 'by-strategy', period],
+    queryFn: () => api.getPnlByStrategyReport(period),
+  });
+}
+
+export function usePnlByBrokerReport(period?: string) {
+  return useQuery({
+    queryKey: ['reports', 'by-broker', period],
+    queryFn: () => api.getPnlByBrokerReport(period),
+  });
+}
+
+export function useReportsEquityCurve(period?: string) {
+  return useQuery({
+    queryKey: ['reports', 'equity-curve', period],
+    queryFn: () => api.getReportsEquityCurve(period),
+  });
+}
+
+export function useChargesBreakdown(period?: string) {
+  return useQuery({
+    queryKey: ['reports', 'charges', period],
+    queryFn: () => api.getChargesBreakdown(period),
+  });
+}
+
+// Webhook hooks
+export function useWebhooks() {
+  return useQuery({
+    queryKey: ['webhooks'],
+    queryFn: api.getWebhooks,
+  });
+}
+
+export function useWebhook(id: string) {
+  return useQuery({
+    queryKey: ['webhooks', id],
+    queryFn: () => api.getWebhook(id),
+    enabled: !!id,
+  });
+}
+
+export function useCreateWebhook() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.createWebhook,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['webhooks'] });
+    },
+  });
+}
+
+export function useUpdateWebhook() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<Webhook> }) =>
+      api.updateWebhook(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['webhooks'] });
+    },
+  });
+}
+
+export function useDeleteWebhook() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.deleteWebhook,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['webhooks'] });
+    },
+  });
+}
+
+export function useTestWebhook() {
+  return useMutation({
+    mutationFn: api.testWebhook,
+  });
+}
+
+export function useRotateWebhookSecret() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.rotateWebhookSecret,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['webhooks'] });
+    },
+  });
+}
+
+export function useWebhookStats() {
+  return useQuery({
+    queryKey: ['webhooks', 'stats'],
+    queryFn: api.getWebhookStats,
+  });
+}
+
+export function useWebhookLogs(id?: string) {
+  return useQuery({
+    queryKey: id ? ['webhooks', id, 'logs'] : ['webhooks', 'logs', 'all'],
+    queryFn: () => id ? api.getWebhookLogs(id) : api.getAllWebhookLogs(),
+  });
+}
+
+// API Key hooks
+export function useApiKeys() {
+  return useQuery({
+    queryKey: ['api-keys'],
+    queryFn: api.getApiKeys,
+  });
+}
+
+export function useCreateApiKey() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.createApiKey,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['api-keys'] });
+    },
+  });
+}
+
+export function useDeleteApiKey() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.deleteApiKey,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['api-keys'] });
+    },
+  });
+}
+
+export function useRotateApiKey() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.rotateApiKey,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['api-keys'] });
+    },
+  });
+}
+
+export function useApiKeyStats() {
+  return useQuery({
+    queryKey: ['api-keys', 'stats'],
+    queryFn: api.getApiKeyStats,
+  });
+}
+
+// Backtest hooks
+export function useBacktestRuns() {
+  return useQuery({
+    queryKey: ['backtest', 'runs'],
+    queryFn: api.getBacktestRuns,
+  });
+}
+
+export function useBacktestRun(id: string) {
+  return useQuery({
+    queryKey: ['backtest', 'runs', id],
+    queryFn: () => api.getBacktestRun(id),
+    enabled: !!id,
+  });
+}
+
+export function useRunBacktest() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.runBacktest,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['backtest', 'runs'] });
+    },
+  });
+}
+
+export function useDeleteBacktestRun() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.deleteBacktestRun,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['backtest', 'runs'] });
+    },
+  });
+}
+
+export function useBacktestStrategies() {
+  return useQuery({
+    queryKey: ['backtest', 'strategies'],
+    queryFn: api.getBacktestStrategies,
+  });
+}

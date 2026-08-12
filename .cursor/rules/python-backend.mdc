@@ -1,0 +1,75 @@
+---
+description: FastAPI and SQLModel patterns for GoTrading backend development
+globs: gotrading/backend/**/*.py
+alwaysApply: false
+---
+
+# Python Backend Conventions
+
+## Route Structure
+
+One `APIRouter` per domain with `/api/v1/{domain}` prefix:
+
+```python
+# gotrading/backend/routes/strategies.py
+from fastapi import APIRouter, Depends, HTTPException
+from database import get_session
+from models import Strategy
+
+router = APIRouter(prefix="/api/v1/strategies", tags=["strategies"])
+
+@router.get("/")
+def list_strategies(session: Session = Depends(get_session)):
+    return session.query(Strategy).all()
+```
+
+## Session Injection
+
+- Sync routes: `Depends(get_session)`
+- Async routes: `Depends(get_async_session)`
+
+## Models Pattern
+
+- **Pydantic `BaseModel`**: Request/response DTOs
+- **SQLModel**: Database table definitions
+
+```python
+# DTO for API
+class StrategyCreate(BaseModel):
+    name: str
+    config: dict
+
+# Database model
+class Strategy(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    config_json: str  # Store complex config as JSON string
+```
+
+## Error Handling
+
+```python
+# ✅ GOOD - explicit HTTP exceptions
+if not strategy:
+    raise HTTPException(status_code=404, detail="Strategy not found")
+
+# ❌ BAD - silent failures
+try:
+    process_order(order)
+except Exception:
+    pass  # Never swallow errors silently
+```
+
+## Logging
+
+```python
+import logging
+logger = logging.getLogger(__name__)
+
+logger.info(f"Strategy {id} started")
+logger.error(f"Order failed: {error}", exc_info=True)
+```
+
+## Dependencies
+
+When adding new imports, update `requirements.txt` with the package.

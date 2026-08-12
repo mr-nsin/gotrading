@@ -1,0 +1,62 @@
+---
+description: Ensures AI always has access to project context from memory-bank and knows about available agents
+alwaysApply: true
+---
+
+# Memory Bank Context
+
+## Required Reading
+
+Before starting any task, check these memory-bank files for context:
+
+| File | When to Read |
+|------|--------------|
+| `gotrading/memory-bank/activeContext.md` | Always - current focus |
+| `gotrading/memory-bank/progress.md` | For migration status |
+| `gotrading/memory-bank/available-agents.md` | To know what agents can help |
+
+## Available Agents
+
+Custom agents are defined in `.cursor/agents/`. Use them via Task tool:
+
+| Agent | Use For |
+|-------|---------|
+| `ui-migration` | Porting components from algo-desk-central |
+| `backend-endpoint` | Creating new API endpoints (full stack) |
+| `api-hook-generator` | Creating React Query hooks |
+| `broker-adapter` | Adding new broker integrations |
+| `shadcn-component` | Adding/porting UI components |
+| `architecture-audit` | Fixing critical architecture issues |
+| `test-scaffold` | Generating test files |
+| `migration-sync` | Syncing with Lovable updates |
+
+## Key Context Files
+
+```
+gotrading/memory-bank/
+├── activeContext.md       # Current work focus
+├── progress.md            # Overall progress tracking
+├── available-agents.md    # Agent capabilities index
+├── antigravity-rules.md   # Development constraints
+├── component-migration-plan.md
+├── ui-migration-plan.md
+├── techContext.md
+├── systemPatterns.md
+├── projectbrief.md
+└── productContext.md
+```
+
+## Usage Pattern
+
+1. **Starting a task:** Read `activeContext.md` and `progress.md`
+2. **Complex task:** Check `available-agents.md` for helpful agents
+3. **UI work:** Read `component-migration-plan.md`
+4. **Backend work:** Read `techContext.md` and `systemPatterns.md`
+5. **After completing:** Update `progress.md`
+
+## Update Requirements
+
+After completing significant work:
+- Update `progress.md` with completed items
+- Update `activeContext.md` if focus changes
+- Note any blockers or decisions made

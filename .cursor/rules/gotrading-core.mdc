@@ -1,0 +1,52 @@
+---
+description: Core conventions for the GoTrading algorithmic trading platform - enforces code quality, performance, and development workflow standards
+alwaysApply: true
+---
+
+# GoTrading Core Conventions
+
+## Code Generation Constraints
+
+### No Bloat
+- DO NOT generate extra classes, files, or utilities unless explicitly required
+- Always evaluate if existing code can be reused before creating new
+- Proactively suggest simplifications and removal of unused dependencies
+
+### No Mock Data
+- NEVER generate mock data or interval simulators
+- Always wire frontend directly to real FastAPI endpoints at `NEXT_PUBLIC_API_URL`
+- If backend endpoint doesn't exist, create it — don't fake it
+
+### Performance First (HFT Requirements)
+- All Python backend code must be optimized for speed
+- Use async loops, O(1) lookups, avoid blocking operations
+- Use `msgpack` binary format over WebSockets instead of JSON
+
+## Project Structure
+
+```
+gotrading/
+├── .cursor/agents/       # Subagent definitions
+├── algo-desk-central/    # READ-ONLY reference UI (Lovable)
+└── gotrading/
+    ├── backend/          # FastAPI + trading engine
+    ├── frontend/         # Production Next.js app (EDIT THIS)
+    ├── frontend_new/     # DEPRECATED - do not use
+    ├── docs/             # Product documentation
+    └── memory-bank/      # AI agent context files
+```
+
+## Progress Tracking
+
+At the end of EVERY response, explicitly list:
+1. **Completed:** Features/tasks just finished
+2. **Pending:** Next items in queue
+
+## Key Environment Variables
+
+| Variable | Purpose |
+|----------|---------|
+| `DATABASE_URL` | DB connection (default: sqlite:///./trading.db) |
+| `NEXT_PUBLIC_API_URL` | Backend URL for frontend |
+| `PAPER_TRADING` | True for paper trading mode |
+| `JWT_SECRET_KEY` | Auth token signing |

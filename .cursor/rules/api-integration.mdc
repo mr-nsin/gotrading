@@ -1,0 +1,95 @@
+---
+description: API client and React Query hook patterns for GoTrading
+globs: gotrading/frontend/src/{hooks,lib}/**/*.ts
+alwaysApply: false
+---
+
+# API Integration Patterns
+
+## API Client (`lib/api.ts`)
+
+```typescript
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
+  const res = await fetch(`${API_URL}${endpoint}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+    ...options,
+  });
+  
+  if (!res.ok) {
+    throw new Error(`API Error: ${res.status}`);
+  }
+  
+  return res.json();
+}
+```
+
+## React Query Hooks (`hooks/use-api.ts`)
+
+### Query Hook Pattern
+
+```typescript
+export function useStrategies() {
+  return useQuery({
+    queryKey: ['strategies'],
+    queryFn: () => api.getStrategies(),
+  });
+}
+
+export function useStrategy(id: string) {
+  return useQuery({
+    queryKey: ['strategies', id],
+    queryFn: () => api.getStrategy(id),
+    enabled: !!id,
+  });
+}
+```
+
+### Mutation Hook Pattern
+
+```typescript
+export function useCreateStrategy() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (data: StrategyCreate) => api.createStrategy(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['strategies'] });
+      toast.success('Strategy created');
+    },
+    onError: (error) => {
+      toast.error(`Failed: ${error.message}`);
+    },
+  });
+}
+```
+
+## Query Key Conventions
+
+| Resource | Key Pattern |
+|----------|-------------|
+| List | `['strategies']` |
+| Single | `['strategies', id]` |
+| Nested | `['strategies', id, 'orders']` |
+| Filtered | `['strategies', { status: 'active' }]` |
+
+## Case Transformation
+
+Backend uses snake_case, frontend uses camelCase:
+
+```typescript
+// Transform in API layer
+interface ApiStrategy {
+  strategy_name: string;
+  created_at: string;
+}
+
+interface Strategy {
+  strategyName: string;
+  createdAt: string;
+}
+```
