@@ -8,6 +8,7 @@ type Theme = "dark" | "light";
 interface MoneyOptions {
   sign?: boolean;
   decimals?: number;
+  compact?: boolean;
   forceCompact?: boolean;
 }
 

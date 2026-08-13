@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, RefreshCw, Unplug } from "lucide-react";
+import { ArrowLeft, RefreshCw, Unplug, Settings } from "lucide-react";
 import { toast } from "sonner";
 
 import { KpiCard, PageHeader, Panel, SideTag, StatusPill, Tag, EmptyState, TableSkeleton } from "@/components/ui-kit";
@@ -10,6 +11,17 @@ import { DataTable, type Column } from "@/components/data-table";
 import { EquityChart } from "@/components/charts";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   useBroker,
@@ -19,10 +31,12 @@ import {
   useBrokerPositions,
   useReauthenticateBroker,
   useDisconnectBroker,
+  useUpdateBrokerCredentials,
 } from "@/hooks/use-api";
 import { useSettings } from "@/components/settings-provider";
 import { formatDateTime, formatINR, formatNum, formatTime, pnlClass } from "@/lib/format";
 import type { Order, Position } from "@/lib/api";
+import { BrokerLogo } from "@/components/broker-logo";
 
 export default function BrokerDetailPage() {
   const params = useParams();
@@ -40,6 +54,13 @@ export default function BrokerDetailPage() {
 
   const reauthMutation = useReauthenticateBroker();
   const disconnectMutation = useDisconnectBroker();
+  const updateMutation = useUpdateBrokerCredentials();
+
+  const [reconfigureOpen, setReconfigureOpen] = useState(false);
+  const [clientId, setClientId] = useState("");
+  const [apiKey, setApiKey] = useState("");
+  const [password, setPassword] = useState("");
+  const [totpSecret, setTotpSecret] = useState("");
 
   const funds = broker?.funds ?? broker?.balance ?? 0;
   const marginUsed = broker?.marginUsed ?? broker?.used ?? 0;
@@ -64,6 +85,31 @@ export default function BrokerDetailPage() {
       },
       onError: () => toast.error("Failed to disconnect broker"),
     });
+  };
+
+  const handleReconfigure = () => {
+    updateMutation.mutate(
+      {
+        id: brokerId,
+        data: {
+          client_id: clientId || undefined,
+          api_key: apiKey || undefined,
+          password: password || undefined,
+          totp_secret: totpSecret || undefined,
+        },
+      },
+      {
+        onSuccess: () => {
+          toast.success("Broker credentials updated");
+          setReconfigureOpen(false);
+          setClientId("");
+          setApiKey("");
+          setPassword("");
+          setTotpSecret("");
+        },
+        onError: () => toast.error("Failed to update credentials"),
+      }
+    );
   };
 
   const ordCols: Column<Order>[] = [
@@ -174,11 +220,77 @@ export default function BrokerDetailPage() {
   return (
     <div className="space-y-3">
       <PageHeader
-        title={broker.name || broker.display_name || "Broker"}
+        title={
+          <div className="flex items-center gap-3">
+            <BrokerLogo name={broker.name || broker.display_name || ""} size={28} />
+            <span>{broker.name || broker.display_name || "Broker"}</span>
+          </div>
+        }
         description={description}
         actions={
           <>
             <StatusPill status={broker.status} dot />
+            <Dialog open={reconfigureOpen} onOpenChange={setReconfigureOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="h-7 gap-1 text-xs">
+                  <Settings className="size-3.5" />
+                  Reconfigure
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Reconfigure Broker</DialogTitle>
+                  <DialogDescription>
+                    Update the credentials for {broker.name || broker.display_name}. Leave blank to keep existing value.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs">Client ID / Code</Label>
+                    <Input
+                      value={clientId}
+                      onChange={(e) => setClientId(e.target.value)}
+                      className="h-8 text-xs"
+                      placeholder="Leave blank to keep existing"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Password</Label>
+                    <Input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="h-8 text-xs"
+                      placeholder="Leave blank to keep existing"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">API Key</Label>
+                    <Input
+                      value={apiKey}
+                      onChange={(e) => setApiKey(e.target.value)}
+                      className="h-8 text-xs"
+                      placeholder="Leave blank to keep existing"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">TOTP Secret</Label>
+                    <Input
+                      type="password"
+                      value={totpSecret}
+                      onChange={(e) => setTotpSecret(e.target.value)}
+                      className="h-8 text-xs"
+                      placeholder="Leave blank to keep existing"
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button size="sm" onClick={handleReconfigure} disabled={updateMutation.isPending}>
+                    Save Changes
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
             <Button
               variant="outline"
               size="sm"
@@ -285,7 +397,7 @@ export default function BrokerDetailPage() {
                 rows={orders}
                 rowKey={(o) => o.id}
                 maxHeight="24rem"
-                emptyMessage="No orders for this broker"
+                empty="No orders for this broker"
               />
             )}
           </Panel>
@@ -303,7 +415,7 @@ export default function BrokerDetailPage() {
                 rows={positions}
                 rowKey={(p) => p.id}
                 maxHeight="24rem"
-                emptyMessage="No positions for this broker"
+                empty="No positions for this broker"
               />
             )}
           </Panel>

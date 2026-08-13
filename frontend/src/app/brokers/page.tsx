@@ -43,6 +43,8 @@ function Stat({ label, value, tone }: { label: string; value: string; tone?: str
   );
 }
 
+import { BrokerLogo } from "@/components/broker-logo";
+
 const BROKER_COLORS: Record<string, string> = {
   zerodha: "#387ED1",
   upstox: "#5D5FEF",
@@ -159,7 +161,10 @@ export default function BrokersPage() {
                         "Kotak Neo",
                       ].map((b) => (
                         <SelectItem key={b} value={b.toLowerCase().replace(" ", "")}>
-                          {b}
+                          <div className="flex items-center gap-2">
+                            <BrokerLogo broker={b.toLowerCase().replace(" ", "")} size={16} />
+                            <span>{b}</span>
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -241,12 +246,7 @@ export default function BrokersPage() {
             <div key={b.id} className="panel p-3">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <div
-                    className="flex size-9 items-center justify-center rounded-md border border-border bg-surface-2 text-[11px] font-bold"
-                    style={{ color: getBrokerColor(b) }}
-                  >
-                    {getBrokerInitials(b)}
-                  </div>
+                  <BrokerLogo name={b.name || b.broker_type || ""} size={36} />
                   <div>
                     <Link
                       href={`/brokers/${b.id}`}

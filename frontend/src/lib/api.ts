@@ -74,6 +74,8 @@ export interface Broker {
   marginAvailable?: number;
   strategies?: number;
   clientId?: string;
+  client_id?: string;
+  broker_type?: string;
   balance?: number;
   used?: number;
   display_name?: string;
@@ -88,7 +90,8 @@ export interface Broker {
 }
 
 export interface AddBrokerRequest {
-  code: string;
+  code?: string;
+  broker_type?: string;
   api_key?: string;
   api_secret?: string;
   access_token?: string;
@@ -114,8 +117,10 @@ export interface Position {
   symbol: string;
   segment?: string;
   strategyId?: string;
+  strategy_id?: string;
   strategy_name?: string;
   brokerId?: string;
+  broker_id?: string;
   qty?: number;
   quantity?: number;
   avgPrice?: number;
@@ -140,6 +145,7 @@ export interface Order {
   strategyId?: string;
   strategy_id?: string;
   brokerId?: string;
+  broker_id?: string;
   side: string;
   type?: string;
   order_type?: string;
@@ -250,11 +256,19 @@ export interface ProfilePreferences {
   timezone: string;
 }
 
-export interface TwoFactorSetup {
+export type TwoFactorSetup = {
   secret: string;
   qr_url: string;
   otpauth_url: string;
-}
+};
+
+export type UpdateProfileRequest = {
+  name?: string;
+  email?: string;
+  mobile?: string;
+  pan?: string;
+  subscription_tier?: string;
+};
 
 async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${endpoint}`, {
@@ -432,6 +446,11 @@ export const api = {
   getBrokerPositions: (id: string) => fetchApi<Position[]>(`/api/v1/brokers/${id}/positions`),
   reauthenticateBroker: (id: string) =>
     fetchApi<Broker>(`/api/v1/brokers/${id}/connect`, { method: 'POST' }),
+  updateBrokerCredentials: (id: string, data: Partial<AddBrokerRequest>) =>
+    fetchApi<{ status: string; message: string }>(`/api/v1/brokers/${id}/credentials`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
   disconnectBroker: (id: string) =>
     fetchApi<Broker>(`/api/v1/brokers/${id}/disconnect`, { method: 'POST' }),
   addBroker: (data: AddBrokerRequest) =>
@@ -469,7 +488,7 @@ export const api = {
   // Webhooks
   getWebhooks: () => fetchApi<Webhook[]>('/api/v1/webhooks'),
   getWebhook: (id: string) => fetchApi<Webhook>(`/api/v1/webhooks/${id}`),
-  createWebhook: (data: { name: string; strategy_id: string }) => 
+  createWebhook: (data: { name: string; strategy_id?: string | null }) => 
     fetchApi<Webhook>('/api/v1/webhooks', { method: 'POST', body: JSON.stringify(data) }),
   updateWebhook: (id: string, data: Partial<Webhook>) =>
     fetchApi<Webhook>(`/api/v1/webhooks/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
@@ -544,8 +563,8 @@ export const api = {
     }),
 
   // Profile
-  getProfile: () => fetchApi<{ id: string; email: string; subscription_tier: string; created_at: string }>('/api/v1/profile'),
-  updateProfile: (data: { email?: string; subscription_tier?: string }) =>
+  getProfile: () => fetchApi<Profile>('/api/v1/profile'),
+  updateProfile: (data: UpdateProfileRequest) =>
     fetchApi<{ ok: boolean }>('/api/v1/profile', {
       method: 'PUT',
       body: JSON.stringify(data),

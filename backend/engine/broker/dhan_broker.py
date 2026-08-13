@@ -16,11 +16,29 @@ class DhanBroker(BaseBroker):
     """
     Integration for Dhan HQ API.
     """
-    def __init__(self, user_id=None):
+    def __init__(self, user_id=None, broker_id=None):
         super().__init__(user_id)
         
         self.client_id = os.getenv("DHAN_CLIENT_ID")
         self.access_token = os.getenv("DHAN_ACCESS_TOKEN")
+        
+        if broker_id or user_id:
+            from database import Session, engine
+            from models import BrokerCredential
+            from security import decrypt_credential
+            from sqlmodel import select
+            with Session(engine) as session:
+                query = select(BrokerCredential).where(BrokerCredential.code == "DHANHQ")
+                if broker_id:
+                    query = query.where(BrokerCredential.id == broker_id)
+                elif user_id:
+                    query = query.where(BrokerCredential.user_id == user_id)
+                cred = session.exec(query).first()
+                if cred:
+                    if cred.dhan_client_id: self.client_id = decrypt_credential(cred.dhan_client_id)
+                    # Currently we don't store dhan_access_token explicitly, but assuming we might:
+                    # if cred.dhan_access_token: self.access_token = decrypt_credential(cred.dhan_access_token)
+                    
         self.dhan = None
         
         if self.client_id and self.access_token and dhanhq:

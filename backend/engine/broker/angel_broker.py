@@ -16,19 +16,39 @@ class AngelBroker(BaseBroker):
     """
     Integration for AngelOne API.
     """
-    def __init__(self, user_id=None):
+    def __init__(self, user_id=None, broker_id=None):
         super().__init__(user_id)
         
         self.client_code = os.getenv("ANGEL_CLIENT_CODE")
         self.password = os.getenv("ANGEL_PASSWORD")
         self.api_key = os.getenv("ANGEL_API_KEY")
-        self.totp = os.getenv("ANGEL_TOTP")
+        self.totp_secret = os.getenv("ANGEL_TOTP")
+        
+        if broker_id or user_id:
+            from database import Session, engine
+            from models import BrokerCredential
+            from security import decrypt_credential
+            from sqlmodel import select
+            with Session(engine) as session:
+                query = select(BrokerCredential).where(BrokerCredential.code == "ANGEL")
+                if broker_id:
+                    query = query.where(BrokerCredential.id == broker_id)
+                elif user_id:
+                    query = query.where(BrokerCredential.user_id == user_id)
+                cred = session.exec(query).first()
+                if cred:
+                    if cred.angelone_client_code: self.client_code = decrypt_credential(cred.angelone_client_code)
+                    if cred.angelone_password: self.password = decrypt_credential(cred.angelone_password)
+                    if cred.angelone_api_key: self.api_key = decrypt_credential(cred.angelone_api_key)
+                    if cred.angelone_totp_secret: self.totp_secret = decrypt_credential(cred.angelone_totp_secret)
         
         self.smartApi = None
         if self.client_code and self.password and self.api_key and SmartConnect:
             try:
+                import pyotp
                 self.smartApi = SmartConnect(api_key=self.api_key)
-                data = self.smartApi.generateSession(self.client_code, self.password, self.totp)
+                current_totp = pyotp.TOTP(self.totp_secret).now() if self.totp_secret else "000000"
+                data = self.smartApi.generateSession(self.client_code, self.password, current_totp)
                 if data and data.get('status'):
                     logger.info("AngelBroker initialized and connected.")
                 else:

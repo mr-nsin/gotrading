@@ -14,22 +14,33 @@ class FyersBroker(BaseBroker):
     """
     Handles live order execution via the Fyers API.
     """
-    def __init__(self, user_id=None):
+    def __init__(self, user_id=None, broker_id=None):
         super().__init__(user_id)
-        self.risk_manager = RiskManager()
-        if not self.user_id:
-            with Session(engine) as session:
-                user = session.exec(select(User)).first()
-                if user:
-                    self.user_id = user.id
-
-        self.app_id = os.getenv("FYERS_APP_ID")
+        
+        self.client_id = os.getenv("FYERS_CLIENT_ID")
         self.access_token = os.getenv("FYERS_ACCESS_TOKEN")
+        
+        if broker_id or user_id:
+            from database import Session, engine
+            from models import BrokerCredential
+            from security import decrypt_credential
+            from sqlmodel import select
+            with Session(engine) as session:
+                query = select(BrokerCredential).where(BrokerCredential.code == "FYERS-V3")
+                if broker_id:
+                    query = query.where(BrokerCredential.id == broker_id)
+                elif user_id:
+                    query = query.where(BrokerCredential.user_id == user_id)
+                cred = session.exec(query).first()
+                if cred:
+                    if cred.fyers_app_id: self.client_id = decrypt_credential(cred.fyers_app_id)
+                    if cred.fyers_access_token: self.access_token = decrypt_credential(cred.fyers_access_token)
+                    
         self.fyers = None
         
-        if self.app_id and self.access_token and self.app_id != "YOUR_APP_ID":
+        if self.client_id and self.access_token and self.client_id != "YOUR_APP_ID":
             self.fyers = fyersModel.FyersModel(
-                client_id=self.app_id,
+                client_id=self.client_id,
                 is_async=False,
                 token=self.access_token,
                 log_path="./logs"

@@ -1,6 +1,7 @@
 import { format, parseISO } from "date-fns";
 
-type MoneyOpts = { sign?: boolean; decimals?: number };
+export type MoneyOpts = { sign?: boolean; decimals?: number; compact?: boolean };
+export type MoneyOptions = MoneyOpts;
 
 const INR = new Intl.NumberFormat("en-IN", {
   style: "currency",
@@ -14,6 +15,11 @@ const INR_COMPACT = new Intl.NumberFormat("en-IN", {
   notation: "compact",
   maximumFractionDigits: 1,
 });
+
+export function money(value: number, opts: MoneyOpts = {}): string {
+  if (opts.compact) return formatINRCompact(value);
+  return formatINR(value, opts);
+}
 
 export function formatINR(value: number, opts: MoneyOpts = {}): string {
   const { sign = false, decimals = 2 } = opts;

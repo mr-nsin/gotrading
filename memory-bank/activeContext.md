@@ -1,20 +1,15 @@
 # Active Context
 
 ## Current Focus
-- Completed Phase 3B Fully Async Database Engine (`asyncpg`) Architecture:
-  1. Configured `create_async_engine` in [`backend/database.py`](file:///Users/nitinsinghal/Documents/project/india-trading/backend/database.py) with `postgresql+asyncpg://` protocol support, `pool_size=20`, `max_overflow=10`, and `pool_pre_ping=True`.
-  2. Implemented `get_async_session` dependency for async request handling with graceful driver fallback.
-- Verified active backend (`http://127.0.0.1:8000`) and frontend (`http://localhost:3000`).
-- Implemented expandable position row accordion on `/positions` table.
-- Added live real-time MTM P&L calculation and percentage streaming (e.g. `+₹1,886.00 (+0.36%)`).
-- Fixed position accumulation weighted average entry price calculation across multiple BUY orders.
-- Database column auto-migration for `virtualtrade.ltp` and `virtualtrade.pnl_pct` in Supabase PostgreSQL (`backend/database.py`).
+1. **Implemented New Backend API Routers (Phase 1):**
+   - Created [`backend/routes/dashboard.py`](file:///Users/nitinsinghal/Documents/project/india-trading/backend/routes/dashboard.py) with `/api/v1/dashboard/totals`, `/equity-curve`, and `/intraday-curve` endpoints.
+   - Created [`backend/routes/notifications.py`](file:///Users/nitinsinghal/Documents/project/india-trading/backend/routes/notifications.py) with `/api/v1/notifications`, `/mark-all-read`, and `/settings` endpoints.
+   - Created [`backend/routes/profile.py`](file:///Users/nitinsinghal/Documents/project/india-trading/backend/routes/profile.py) with `/api/v1/profile` and `/sessions` endpoints.
+2. **Completed Institutional 10x Performance & Rust GIL Bypass Audit:**
+   - Generated [`master_10x_performance_audit_prompt.md`](file:///Users/nitinsinghal/.gemini/antigravity/brain/9dbca77e-9f0d-406c-bd4c-38ac55dc5adb/master_10x_performance_audit_prompt.md) and [`performance_and_rust_gil_audit_report.md`](file:///Users/nitinsinghal/.gemini/antigravity/brain/9dbca77e-9f0d-406c-bd4c-38ac55dc5adb/performance_and_rust_gil_audit_report.md).
+   - Identified PyO3 Rust native extension candidates (`gotrading_core`) to bypass Python GIL during tick fanout and SIMD Black-Scholes Greeks evaluation.
 
-## Recent Changes
-1. **Expandable Order Breakdown Accordion (`frontend/src/app/positions/page.tsx`):**
-   - Added chevron toggle buttons next to instrument symbol.
-   - Expanding a position opens an inline nested table showing all 49 associated executed orders (Order ID, Timestamp in IST, Side, Quantity, Price, Product, Status).
-2. **Real-time LTP & MTM P&L % Streaming (`backend/main.py` & `backend/routes/positions.py`):**
-   - Live tick background loop updates `ltp`, `pnl`, and `pnl_pct` for active open trades.
-3. **Database Schema Auto-Migration (`backend/database.py`):**
-   - Automatically executes `ALTER TABLE virtualtrade ADD COLUMN ltp DOUBLE PRECISION` and `ALTER TABLE virtualtrade ADD COLUMN pnl_pct DOUBLE PRECISION`.
+## Active Runtimes
+- **FastAPI Backend (`http://127.0.0.1:8000`):** `200 OK`
+- **Next.js Frontend (`http://localhost:3000`):** `200 OK`
+- **TypeScript (`npx tsc --noEmit`):** 0 errors (Code 0)

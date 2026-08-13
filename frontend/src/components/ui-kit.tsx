@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { formatPct, pnlClass } from "@/lib/format";
 import { Skeleton } from "@/components/ui/skeleton";
 import { HoverLift, TickerValue } from "@/components/motion";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
 export function Panel({
   title,
@@ -27,21 +28,21 @@ export function Panel({
   live?: boolean;
 }) {
   return (
-    <section className={cn("panel flex min-w-0 flex-col overflow-hidden", className)}>
+    <Card className={cn("flex min-w-0 flex-col overflow-hidden bg-card/40 backdrop-blur-sm border-border/60 shadow-sm", className)}>
       {title && (
-        <header className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-3 py-2">
-          <div className="min-w-0">
-            <h2 className="flex items-center gap-2 text-[13px] font-semibold tracking-tight">
+        <CardHeader className="flex flex-row items-center justify-between gap-2 border-b border-border/40 px-4 py-3 space-y-0">
+          <div className="min-w-0 flex-1">
+            <CardTitle className="flex items-center gap-2 text-sm font-semibold tracking-tight">
               {title}
               {live && <span className="live-dot" />}
-            </h2>
-            {subtitle && <p className="mt-0.5 text-[11px] text-muted-foreground">{subtitle}</p>}
+            </CardTitle>
+            {subtitle && <CardDescription className="mt-1 text-xs text-muted-foreground">{subtitle}</CardDescription>}
           </div>
           {actions && <div className="flex shrink-0 items-center gap-1.5">{actions}</div>}
-        </header>
+        </CardHeader>
       )}
-      <div className={cn("min-w-0 flex-1", bodyClassName ?? "p-3")}>{children}</div>
-    </section>
+      <CardContent className={cn("min-w-0 flex-1", bodyClassName ?? "p-4")}>{children}</CardContent>
+    </Card>
   );
 }
 
@@ -67,30 +68,36 @@ export function KpiCard({
 
   return (
     <HoverLift>
-      <div className="panel group relative overflow-hidden px-3 py-2.5 transition-colors hover:border-primary/40">
+      <Card className="group relative flex h-full flex-col overflow-hidden transition-all duration-300 hover:border-primary/40 bg-card/40 backdrop-blur-sm border-border/60 shadow-sm hover:shadow-md">
         <span className="pointer-events-none absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-        <div className="flex items-start justify-between gap-2">
-          <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">{label}</span>
-          {icon && <span className="text-muted-foreground/70 transition-colors group-hover:text-primary">{icon}</span>}
-        </div>
-        {loading ? (
-          <Skeleton className="mt-2 h-6 w-24" />
-        ) : (
-          <TickerValue
-            value={value}
-            className={cn("num mt-1.5 text-lg font-semibold leading-none", toneClass)}
-          />
-        )}
-        <div className="mt-1.5 flex items-center gap-1.5">
-          {typeof delta === "number" && (
-            <span className={cn("num inline-flex items-center gap-0.5 text-[11px]", pnlClass(delta))}>
-              {delta >= 0 ? <ArrowUpRight className="size-3" /> : <ArrowDownRight className="size-3" />}
-              {formatPct(delta)}
-            </span>
-          )}
-          {sub && <span className="num truncate text-[11px] text-muted-foreground">{sub}</span>}
-        </div>
-      </div>
+        <CardContent className="flex flex-1 flex-col justify-between p-4">
+          <div className="flex items-start justify-between gap-2">
+            <span className="text-xs font-medium tracking-tight text-muted-foreground">{label}</span>
+            {icon && <span className="text-muted-foreground/70 transition-colors group-hover:text-primary">{icon}</span>}
+          </div>
+          <div className="mt-3 flex flex-col gap-1.5">
+            {loading ? (
+              <Skeleton className="h-7 w-24" />
+            ) : (
+              <TickerValue
+                value={value}
+                className={cn("num text-2xl font-bold tracking-tight leading-none", toneClass)}
+              />
+            )}
+            {(typeof delta === "number" || sub) && (
+              <div className="flex items-center gap-2">
+                {typeof delta === "number" && (
+                  <span className={cn("num inline-flex items-center gap-0.5 text-[11px] font-medium", pnlClass(delta))}>
+                    {delta >= 0 ? <ArrowUpRight className="size-3" /> : <ArrowDownRight className="size-3" />}
+                    {formatPct(delta)}
+                  </span>
+                )}
+                {sub && <span className="num truncate text-[11px] text-muted-foreground">{sub}</span>}
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </HoverLift>
   );
 }
@@ -145,13 +152,14 @@ const statusStyles: Record<string, string> = {
   closed: "bg-muted text-muted-foreground border-border",
 };
 
-export function StatusPill({ status, label, dot }: { status: string; label?: string; dot?: boolean }) {
+export function StatusPill({ status, label, dot, className }: { status: string; label?: string; dot?: boolean; className?: string }) {
   const key = status.toLowerCase();
   return (
     <span
       className={cn(
         "inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide",
         statusStyles[key] ?? "bg-muted text-muted-foreground border-border",
+        className
       )}
     >
       {dot && <span className="size-1.5 rounded-full bg-current" />}
@@ -191,8 +199,8 @@ export function PageHeader({
   description,
   actions,
 }: {
-  title: string;
-  description?: string;
+  title: ReactNode;
+  description?: ReactNode;
   actions?: ReactNode;
 }) {
   return (

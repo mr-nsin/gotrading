@@ -30,6 +30,9 @@ def create_db_and_tables():
                 ("zerodha_api_key", "VARCHAR"),
                 ("dhan_client_id", "VARCHAR"),
                 ("angelone_api_key", "VARCHAR"),
+                ("angelone_client_code", "VARCHAR"),
+                ("angelone_password", "VARCHAR"),
+                ("angelone_totp_secret", "VARCHAR"),
             ]
             for col_name, col_type in add_cols:
                 if col_name not in columns:

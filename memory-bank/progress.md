@@ -2,6 +2,12 @@
 
 ## Completed Features
 
+### Phase 1 API Endpoints & 10x Performance Audit (2026-08-13) ✅ COMPLETE
+- [x] Implemented `backend/routes/dashboard.py` (`/api/v1/dashboard/totals`, `/equity-curve`, `/intraday-curve`)
+- [x] Implemented `backend/routes/notifications.py` (`/api/v1/notifications`, `/mark-all-read`, `/settings`)
+- [x] Implemented `backend/routes/profile.py` (`/api/v1/profile`, `/sessions`)
+- [x] Completed Full 10x Performance & Rust GIL Bypass Audit (`master_10x_performance_audit_prompt.md`, `performance_and_rust_gil_audit_report.md`)
+
 ### Multi-Expert Analysis Implementation (2026-08-12) ✅ CRITICAL FIXES COMPLETE
 
 **Security Fixes (4/4 complete):**
@@ -40,6 +46,7 @@
 - `backend/database.py` - Debug mode for SQL echo
 - `backend/utils/encryption.py` - NEW: Fernet encryption utility
 
+- [x] **Complete Repository Audit & Type-Check (2026-08-13):** Re-checked codebase following `46af5f3` commit (+41,897 insertions), resolved npm packages, fixed all TypeScript compilation errors (`npx tsc --noEmit` code 0), and verified live runtimes on `:8000` (FastAPI) and `:3000` (Next.js).
 - [x] **Phase 3B Fully Async Database Engine (`asyncpg`):** Implemented `create_async_engine` with `postgresql+asyncpg://` protocol support, `pool_size=20`, `max_overflow=10`, `pool_pre_ping=True`, and `get_async_session` dependency for async request handling in [`backend/database.py`](file:///Users/nitinsinghal/Documents/project/india-trading/backend/database.py).
 - [x] **Phase 2 High-Priority Upgrades Executed:** Created Symbol Master Resolver (`SymbolResolver`) for multi-broker ticker translation, wired global `RiskSettings` database table (daily loss limits, max open positions, circuit breaker thresholds) directly to `RiskManager`, and integrated symbol resolution into broker execution adapters.
 - [x] **Phase 1 Critical Fixes Executed:** Decoupled WebSocket state broadcasting, eliminated per-client DB query inflation, bounded market data event queue (`maxsize=1000`), offloaded sync telemetry and strategy tick processing to background threadpools, and added atomic transaction safety for position squareoffs.

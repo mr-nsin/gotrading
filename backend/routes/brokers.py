@@ -27,6 +27,14 @@ class BrokerCreate(BaseModel):
     totp_secret: Optional[str] = None
 
 
+class BrokerCredentialUpdate(BaseModel):
+    api_key: Optional[str] = None
+    api_secret: Optional[str] = None
+    client_id: Optional[str] = None
+    password: Optional[str] = None
+    totp_secret: Optional[str] = None
+
+
 class BrokerSettings(BaseModel):
     auto_square_off: Optional[str] = None
     max_daily_loss: Optional[float] = None
@@ -373,6 +381,46 @@ def update_broker_settings(
     
     return broker_to_response(broker, session)
 
+
+@router.put("/{id}/credentials")
+def update_broker_credentials(
+    id: uuid.UUID,
+    data: BrokerCredentialUpdate,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+) -> Dict[str, Any]:
+    """Update broker credentials"""
+    broker = session.get(BrokerCredential, id)
+    if not broker:
+        raise HTTPException(status_code=404, detail="Broker not found")
+    if broker.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    if data.client_id:
+        broker.client_id = data.client_id
+    if data.api_key:
+        broker.api_key_masked = mask_api_key(data.api_key)
+        
+    if broker.code == "KITE":
+        if data.api_key: broker.zerodha_api_key = encrypt_credential(data.api_key)
+    elif broker.code == "ANGEL":
+        if data.api_key: broker.angelone_api_key = encrypt_credential(data.api_key)
+        if data.client_id: broker.angelone_client_code = encrypt_credential(data.client_id)
+        if data.password: broker.angelone_password = encrypt_credential(data.password)
+        if data.totp_secret: broker.angelone_totp_secret = encrypt_credential(data.totp_secret)
+    elif broker.code == "FYERS":
+        if data.client_id: broker.fyers_app_id = encrypt_credential(data.client_id)
+        if data.api_key: broker.fyers_access_token = encrypt_credential(data.api_key)
+    elif broker.code == "DHAN":
+        if data.client_id: broker.dhan_client_id = encrypt_credential(data.client_id)
+        # Note: Dhan uses access token, if it's passed as api_key or password we can update here if needed
+
+    broker.connection_status = "disconnected"
+    session.add(broker)
+    session.commit()
+    session.refresh(broker)
+    
+    return {"status": "success", "message": "Credentials updated"}
 
 @router.post("/{id}/connect")
 def connect_broker(

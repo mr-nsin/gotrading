@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { ArrowLeft, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";

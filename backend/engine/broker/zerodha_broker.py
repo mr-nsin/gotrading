@@ -16,11 +16,30 @@ class ZerodhaBroker(BaseBroker):
     """
     Integration for Zerodha API.
     """
-    def __init__(self, user_id=None):
+    def __init__(self, user_id=None, broker_id=None):
         super().__init__(user_id)
         
         self.api_key = os.getenv("ZERODHA_API_KEY")
         self.access_token = os.getenv("ZERODHA_ACCESS_TOKEN")
+        
+        if broker_id or user_id:
+            from database import Session, engine
+            from models import BrokerCredential
+            from security import decrypt_credential
+            from sqlmodel import select
+            with Session(engine) as session:
+                query = select(BrokerCredential).where(BrokerCredential.code == "KITE")
+                if broker_id:
+                    query = query.where(BrokerCredential.id == broker_id)
+                elif user_id:
+                    query = query.where(BrokerCredential.user_id == user_id)
+                cred = session.exec(query).first()
+                if cred:
+                    if cred.zerodha_api_key: self.api_key = decrypt_credential(cred.zerodha_api_key)
+                    # Note: Zerodha requires generating the access_token from the api_secret via login. 
+                    # If access_token isn't in DB, we rely on the connect endpoint generating it and storing it maybe?
+                    # For now, if we have api_key, we set it.
+                    
         self.kite = None
         
         if self.api_key and self.access_token and KiteConnect:

@@ -189,7 +189,7 @@ export default function Dashboard() {
         </div>
       ),
     },
-    { key: "side", header: "Side", cell: (o) => <SideTag side={o.side} /> },
+    { key: "side", header: "Side", cell: (o) => <SideTag side={o.side as "BUY" | "SELL"} /> },
     { key: "type", header: "Type", cell: (o) => <span className="num text-muted-foreground">{o.type || o.order_type}</span> },
     { key: "qty", header: "Qty", align: "right", cell: (o) => <span className="num">{o.qty || o.quantity}</span> },
     { key: "price", header: "Price", align: "right", cell: (o) => <span className="num">{formatNum(o.price || o.avgFill || o.average_price || 0)}</span> },
@@ -255,16 +255,16 @@ export default function Dashboard() {
 
   if (totalsLoading) {
     return (
-      <div className="space-y-3">
+      <div className="space-y-6 px-4 py-6">
         <PageHeader title="Dashboard" description="Loading..." />
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-9">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {Array.from({ length: 9 }).map((_, i) => (
-            <Skeleton key={i} className="h-20" />
+            <Skeleton key={i} className="h-32 rounded-xl" />
           ))}
         </div>
-        <div className="grid gap-3 xl:grid-cols-3">
-          <Skeleton className="h-80 xl:col-span-2" />
-          <Skeleton className="h-80" />
+        <div className="grid gap-4 xl:grid-cols-3">
+          <Skeleton className="h-[400px] rounded-xl xl:col-span-2" />
+          <Skeleton className="h-[400px] rounded-xl" />
         </div>
       </div>
     );
@@ -288,43 +288,43 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-6 p-6">
       <PageHeader
         title="Dashboard"
         description="Consolidated live view across all strategies and broker accounts · NSE/BSE"
         actions={
-          <Button asChild size="sm" className="h-7 text-xs">
-            <Link href="/strategies/new">New strategy</Link>
+          <Button asChild size="sm" className="h-9 px-4 font-semibold shadow-sm">
+            <Link href="/strategies/new">New Strategy</Link>
           </Button>
         }
       />
 
-      <div className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-9">
-        <KpiCard label="Portfolio Value" value={money(t.portfolioValue, { decimals: 0 })} icon={<Wallet className="size-3.5" />} />
-        <KpiCard label="Capital Deployed" value={money(t.deployed, { decimals: 0 })} sub={`${((t.deployed / t.funds) * 100).toFixed(1)}% of funds`} icon={<Layers className="size-3.5" />} />
-        <KpiCard label="Today's P&L" value={money(t.todayPnl, { sign: true, decimals: 0 })} tone={t.todayPnl >= 0 ? "profit" : "loss"} delta={t.todayPnlPct} icon={<TrendingUp className="size-3.5" />} />
-        <KpiCard label="Overall P&L" value={money(t.overallPnl, { sign: true, decimals: 0 })} tone={t.overallPnl >= 0 ? "profit" : "loss"} delta={t.overallPnlPct} icon={<IndianRupee className="size-3.5" />} />
-        <KpiCard label="Active Strategies" value={`${t.activeStrategies}`} sub={`of ${t.totalStrategies} configured`} icon={<Boxes className="size-3.5" />} />
-        <KpiCard label="Open Positions" value={`${t.openPositions}`} sub={`across ${brokers.length} brokers`} icon={<Activity className="size-3.5" />} />
-        <KpiCard label="Win Rate" value={`${t.winRate.toFixed(1)}%`} tone="profit" sub="last 30 sessions" icon={<Target className="size-3.5" />} />
-        <KpiCard label="Max Drawdown" value={`${t.maxDrawdown.toFixed(1)}%`} tone="loss" sub="peak-to-trough" icon={<TrendingDown className="size-3.5" />} />
-        <KpiCard label="Available Margin" value={money(t.marginAvailable, { decimals: 0 })} sub="aggregated" icon={<PiggyBank className="size-3.5" />} />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+        <KpiCard label="Portfolio Value" value={money(t.portfolioValue, { decimals: 0 })} icon={<Wallet className="size-4" />} />
+        <KpiCard label="Capital Deployed" value={money(t.deployed, { decimals: 0 })} sub={`${((t.deployed / t.funds) * 100).toFixed(1)}% of funds`} icon={<Layers className="size-4" />} />
+        <KpiCard label="Today's P&L" value={money(t.todayPnl, { sign: true, decimals: 0 })} tone={t.todayPnl >= 0 ? "profit" : "loss"} delta={t.todayPnlPct} icon={<TrendingUp className="size-4" />} />
+        <KpiCard label="Overall P&L" value={money(t.overallPnl, { sign: true, decimals: 0 })} tone={t.overallPnl >= 0 ? "profit" : "loss"} delta={t.overallPnlPct} icon={<IndianRupee className="size-4" />} />
+        <KpiCard label="Active Strategies" value={`${t.activeStrategies}`} sub={`of ${t.totalStrategies} configured`} icon={<Boxes className="size-4" />} />
+        <KpiCard label="Open Positions" value={`${t.openPositions}`} sub={`across ${brokers.length} brokers`} icon={<Activity className="size-4" />} />
+        <KpiCard label="Win Rate" value={`${t.winRate.toFixed(1)}%`} tone="profit" sub="last 30 sessions" icon={<Target className="size-4" />} />
+        <KpiCard label="Max Drawdown" value={`${t.maxDrawdown.toFixed(1)}%`} tone="loss" sub="peak-to-trough" icon={<TrendingDown className="size-4" />} />
+        <KpiCard label="Available Margin" value={money(t.marginAvailable, { decimals: 0 })} sub="aggregated" icon={<PiggyBank className="size-4" />} />
       </div>
 
-      <div className="grid gap-3 xl:grid-cols-3">
+      <div className="grid gap-6 xl:grid-cols-3">
         <Panel
           className="xl:col-span-2"
           title="Equity Curve"
           subtitle="Cumulative account equity"
           live
           actions={
-            <div className="flex rounded border border-border p-0.5">
+            <div className="flex items-center gap-1 rounded-md border border-border/60 bg-muted/30 p-1">
               {RANGES.map((rg) => (
                 <button
                   key={rg}
                   onClick={() => setRange(rg)}
-                  className={`num rounded px-1.5 py-0.5 text-[10px] ${
-                    range === rg ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                  className={`num rounded-sm px-2.5 py-1 text-xs font-medium transition-colors ${
+                    range === rg ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {rg}
@@ -333,37 +333,37 @@ export default function Dashboard() {
             </div>
           }
         >
-          {curveLoading ? <Skeleton className="h-[258px]" /> : <EquityChart data={curve} height={258} />}
+          {curveLoading ? <Skeleton className="h-[300px]" /> : <EquityChart data={curve} height={300} />}
         </Panel>
 
         <Panel title="Capital Allocation by Broker" subtitle="Margin deployed">
-          <DonutChart data={allocation} height={258} />
+          <DonutChart data={allocation} height={300} />
         </Panel>
       </div>
 
-      <div className="grid gap-3 xl:grid-cols-3">
+      <div className="grid gap-6 xl:grid-cols-3">
         <Panel className="xl:col-span-2" title="Today's P&L by Strategy">
-          <PnlBarChart data={pnlByStrategy} xKey="name" height={240} vertical />
+          <PnlBarChart data={pnlByStrategy} xKey="name" height={280} vertical />
         </Panel>
-        <div className="grid gap-3">
-          <Panel title="Top Gainers" subtitle="Open positions" bodyClassName="">
-            <DataTable columns={moverCols} rows={gainers} rowKey={(p) => p.id} maxHeight="14rem" dense />
+        <div className="grid gap-6">
+          <Panel title="Top Gainers" subtitle="Open positions" bodyClassName="p-0">
+            <div className="px-1"><DataTable columns={moverCols} rows={gainers} rowKey={(p) => p.id} maxHeight="14rem" dense /></div>
           </Panel>
-          <Panel title="Top Losers" subtitle="Open positions" bodyClassName="">
-            <DataTable columns={moverCols} rows={losers} rowKey={(p) => p.id} maxHeight="14rem" dense />
+          <Panel title="Top Losers" subtitle="Open positions" bodyClassName="p-0">
+            <div className="px-1"><DataTable columns={moverCols} rows={losers} rowKey={(p) => p.id} maxHeight="14rem" dense /></div>
           </Panel>
         </div>
       </div>
 
-      <Panel title="Strategy Performance" subtitle={`${filteredStrategies.length} strategies`} live bodyClassName="">
+      <Panel title="Strategy Performance" subtitle={`${filteredStrategies.length} strategies`} live bodyClassName="p-1">
         {strategiesLoading ? <TableSkeleton rows={5} cols={9} /> : <DataTable columns={strategyCols} rows={filteredStrategies} rowKey={(s) => s.id} maxHeight="30rem" />}
       </Panel>
 
-      <div className="grid gap-3 xl:grid-cols-2">
-        <Panel title="Recent Orders" subtitle="Across all strategies" live bodyClassName="">
+      <div className="grid gap-6 xl:grid-cols-2">
+        <Panel title="Recent Orders" subtitle="Across all strategies" live bodyClassName="p-1">
           {ordersLoading ? <TableSkeleton rows={5} cols={7} /> : <DataTable columns={orderCols} rows={recentOrders} rowKey={(o) => o.id} maxHeight="24rem" />}
         </Panel>
-        <Panel title="Broker Account Snapshot" bodyClassName="">
+        <Panel title="Broker Account Snapshot" bodyClassName="p-1">
           {brokersLoading ? <TableSkeleton rows={3} cols={7} /> : <DataTable columns={brokerCols} rows={brokers} rowKey={(b) => b.id} maxHeight="24rem" />}
         </Panel>
       </div>

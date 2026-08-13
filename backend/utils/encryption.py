@@ -11,22 +11,31 @@ import os
 import base64
 import logging
 from typing import Optional
-from cryptography.fernet import Fernet, InvalidToken
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+try:
+    from cryptography.fernet import Fernet, InvalidToken
+    from cryptography.hazmat.primitives import hashes
+    from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+    CRYPTOGRAPHY_AVAILABLE = True
+except ImportError:
+    CRYPTOGRAPHY_AVAILABLE = False
+    Fernet = None
+    InvalidToken = Exception
 
 logger = logging.getLogger(__name__)
 
 # Salt for key derivation - in production, use a unique salt per deployment
 SALT = b"gotrading_credential_salt_v1"
 
-_fernet: Optional[Fernet] = None
+_fernet = None
 
 
 def _get_fernet() -> Optional[Fernet]:
     """Get or create Fernet instance from environment key."""
     global _fernet
     
+    if not CRYPTOGRAPHY_AVAILABLE:
+        return None
+
     if _fernet is not None:
         return _fernet
     

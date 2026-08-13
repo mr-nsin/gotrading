@@ -1,5 +1,7 @@
+
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -8,6 +10,8 @@ import {
   Bell,
   Boxes,
   BriefcaseBusiness,
+  ChevronLeft,
+  ChevronRight,
   FlaskConical,
   Gauge,
   LayoutDashboard,
@@ -22,7 +26,8 @@ import {
 import { cn } from "@/lib/utils";
 import { useDashboardTotals } from "@/hooks/use-api";
 import { useSettings } from "@/components/settings-provider";
-import { pnlClass } from "@/lib/format";
+import { money, pnlClass } from "@/lib/format";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const groups = [
   {
@@ -62,8 +67,8 @@ const groups = [
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const { money } = useSettings();
   const { data: totals } = useDashboardTotals();
+  const [collapsed, setCollapsed] = useState(false);
 
   const todayPnl = totals?.todayPnl || 0;
 
@@ -71,54 +76,92 @@ export function AppSidebar() {
     exact ? pathname === url : pathname === url || pathname.startsWith(url + "/");
 
   return (
-    <aside className="flex h-full w-[220px] shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
-      <header className="flex items-center gap-2 border-b border-sidebar-border px-3 py-3">
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
-          <ScrollText className="size-4" />
-        </div>
-        <div className="min-w-0">
-          <div className="truncate text-sm font-semibold tracking-tight text-sidebar-foreground">GoTrading</div>
-          <div className="num truncate text-[10px] text-muted-foreground">NSE · BSE · F&O</div>
-        </div>
-      </header>
+    <TooltipProvider delayDuration={0}>
+      <aside
+        className={cn(
+          "relative flex h-full shrink-0 flex-col border-r border-sidebar-border bg-sidebar transition-all duration-300",
+          collapsed ? "w-[72px]" : "w-[240px]"
+        )}
+      >
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="absolute -right-3 top-4 z-50 flex size-6 items-center justify-center rounded-full border border-sidebar-border bg-sidebar text-sidebar-foreground shadow-sm hover:bg-sidebar-accent"
+        >
+          {collapsed ? <ChevronRight className="size-3.5" /> : <ChevronLeft className="size-3.5" />}
+        </button>
 
-      <nav className="flex-1 overflow-y-auto px-2 py-2">
-        {groups.map((group) => (
-          <div key={group.label} className="mb-4">
-            <div className="mb-1 px-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-              {group.label}
+        <header className={cn("flex items-center border-b border-sidebar-border py-4", collapsed ? "justify-center px-0" : "gap-3 px-4")}>
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-sm">
+            <ScrollText className="size-4" />
+          </div>
+          {!collapsed && (
+            <div className="min-w-0">
+              <div className="truncate text-[15px] font-bold tracking-tight text-sidebar-foreground">GoTrading</div>
+              <div className="num truncate text-[10px] uppercase tracking-wider text-muted-foreground">NSE · BSE · F&O</div>
             </div>
-            <ul className="space-y-0.5">
-              {group.items.map((item) => (
-                <li key={item.title}>
-                  <Link
-                    href={item.url}
-                    className={cn(
-                      "flex items-center gap-2 rounded-md px-2 py-1.5 text-[13px] text-sidebar-foreground transition-colors hover:bg-sidebar-accent",
-                      isActive(item.url, item.exact) && "bg-sidebar-accent font-medium text-sidebar-accent-foreground"
-                    )}
-                  >
-                    <item.icon className="size-4 shrink-0" />
-                    <span className="truncate">{item.title}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </nav>
+          )}
+        </header>
 
-      <footer className="border-t border-sidebar-border p-2">
-        <div className="rounded-md bg-sidebar-accent px-2.5 py-2">
-          <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-muted-foreground">
-            <span>Day P&L</span>
-            <span className="live-dot" />
+        <nav className="flex-1 overflow-y-auto py-4">
+          {groups.map((group, index) => (
+            <div key={group.label} className={cn("mb-6", collapsed ? "px-2" : "px-3")}>
+              {!collapsed && (
+                <div className="mb-2 px-2 text-[11px] font-semibold uppercase tracking-wider text-sidebar-foreground/50">
+                  {group.label}
+                </div>
+              )}
+              <ul className="space-y-1">
+                {group.items.map((item) => (
+                  <li key={item.title}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Link
+                          href={item.url}
+                          className={cn(
+                            "flex items-center gap-3 rounded-md px-3 py-2 text-[13.5px] font-medium text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground",
+                            isActive(item.url, item.exact) && "bg-sidebar-accent text-sidebar-accent-foreground font-semibold shadow-sm",
+                            collapsed && "justify-center px-0"
+                          )}
+                        >
+                          <item.icon className="size-4.5 shrink-0" />
+                          {!collapsed && <span className="truncate">{item.title}</span>}
+                        </Link>
+                      </TooltipTrigger>
+                      {collapsed && <TooltipContent side="right">{item.title}</TooltipContent>}
+                    </Tooltip>
+                  </li>
+                ))}
+              </ul>
+              {collapsed && index < groups.length - 1 && (
+                <div className="mt-6 mx-2 border-b border-sidebar-border/50" />
+              )}
+            </div>
+          ))}
+        </nav>
+
+        <footer className="border-t border-sidebar-border p-3">
+          <div className={cn("rounded-lg bg-sidebar-accent py-2.5", collapsed ? "px-1 text-center" : "px-3")}>
+            {!collapsed ? (
+              <>
+                <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-muted-foreground">
+                  <span>Day P&L</span>
+                  <span className="live-dot" />
+                </div>
+                <div className={`num mt-1 text-[15px] font-bold tracking-tight ${pnlClass(todayPnl)}`}>
+                  {money(todayPnl, { sign: true, decimals: 0 })}
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center gap-1.5">
+                <span className="live-dot" />
+                <div className={`num text-[11px] font-bold tracking-tighter ${pnlClass(todayPnl)}`}>
+                  {money(todayPnl, { sign: true, decimals: 0, compact: true })}
+                </div>
+              </div>
+            )}
           </div>
-          <div className={`num text-sm font-semibold ${pnlClass(todayPnl)}`}>
-            {money(todayPnl, { sign: true, decimals: 0 })}
-          </div>
-        </div>
-      </footer>
-    </aside>
+        </footer>
+      </aside>
+    </TooltipProvider>
   );
 }

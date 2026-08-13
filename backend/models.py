@@ -26,7 +26,10 @@ class BrokerCredentialBase(SQLModel):
     fyers_access_token: Optional[str] = None
     zerodha_api_key: Optional[str] = None
     dhan_client_id: Optional[str] = None
+    angelone_client_code: Optional[str] = None
+    angelone_password: Optional[str] = None
     angelone_api_key: Optional[str] = None
+    angelone_totp_secret: Optional[str] = None
 
 
 class BrokerCredential(BrokerCredentialBase, table=True):
@@ -356,3 +359,5 @@ class WebhookLog(SQLModel, table=True):
     payload_json: str = Field(default="{}")
     response_status: Optional[int] = Field(default=None)
     latency_ms: Optional[int] = Field(default=None)
+
+

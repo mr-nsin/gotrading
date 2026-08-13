@@ -97,7 +97,7 @@ export default function ApiWebhooksPage() {
     createWebhookMutation.mutate(
       {
         name: newName,
-        strategy_id: newStrategy || null,
+        strategy_id: newStrategy || undefined,
       },
       {
         onSuccess: () => {
@@ -211,7 +211,7 @@ export default function ApiWebhooksPage() {
 
   const keyCols: Column<ApiKey>[] = [
     { key: "l", header: "Label", cell: (k) => <span className="text-[12px] font-medium">{k.label}</span> },
-    { key: "k", header: "Key", cell: (k) => <span className="num text-[11px] text-muted-foreground">{k.keyMasked || k.key}</span> },
+    { key: "k", header: "Key", cell: (k) => <span className="num text-[11px] text-muted-foreground">{k.keyMasked || (k as any).key || ''}</span> },
     { key: "s", header: "Scopes", cell: (k) => <Tag>{Array.isArray(k.scopes) ? k.scopes.join(', ') : k.scopes}</Tag> },
     { key: "c", header: "Created", cell: (k) => <span className="num text-[11px] text-muted-foreground">{k.createdAt ? formatDateTime(k.createdAt) : 'Unknown'}</span> },
     { key: "u", header: "Last used", cell: (k) => <span className="num text-[11px] text-muted-foreground">{k.lastUsed ? formatDateTime(k.lastUsed) : 'Never'}</span> },

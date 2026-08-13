@@ -250,6 +250,18 @@ export function useDisconnectBroker() {
   });
 }
 
+export function useUpdateBrokerCredentials() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) =>
+      api.updateBrokerCredentials(id, data),
+    onSuccess: (_data, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ['brokers', id] });
+      queryClient.invalidateQueries({ queryKey: ['brokers'] });
+    },
+  });
+}
+
 export function useAddBroker() {
   const queryClient = useQueryClient();
   return useMutation({
