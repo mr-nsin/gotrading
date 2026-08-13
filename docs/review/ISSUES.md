@@ -1,0 +1,11 @@
+# ISSUES.md
+
+| ID | Severity | Category | File:Line | Finding | Impact | Fix | Effort | Confidence |
+|---|---|---|---|---|---|---|---|---|
+| C-01 | **P0** | Money Correctness | `backend/models.py:111` | Uses IEEE-754 `float` for prices, P&L, funds, margin. | Accumulation rounding errors. Severe risk for options. | Migrate schema & code to `Numeric(precision, scale)` / Python `Decimal` or scaled integers. | L | 100% |
+| C-02 | **P0** | Concurrency / State | `backend/engine/risk_manager.py:34-68` | `_cache` mutation is not thread-safe while `process_tick` runs via `asyncio.to_thread`. | Race condition in risk checks; possible crash or incorrect evaluation. | Add `threading.Lock()` around cache mutation logic. | S | 100% |
+| C-03 | **P1** | Concurrency | `backend/engine/orchestrator.py:85-88` | `asyncio.gather` with `return_exceptions=True` catches but SILENTLY ignores strategy exceptions. | Silent death of strategy logic; ticks stop being processed, no alerts. | Add explicit iteration over results to log exceptions and alert. | S | 100% |
+| C-04 | **P1** | Failure Handling | `backend/engine/risk_manager.py:135-139` | Bare `except Exception:` catches all DB errors and returns `False` (safe fail, but blocks trading). | Total platform trading halt on transient DB blips. | Add a local memory fallback, or distinct handling for network vs logic errors. | M | 100% |
+| C-05 | **P1** | Blocking I/O | `backend/engine/risk_manager.py:47` | Synchronous `Session(engine)` is used inside the threadpool instead of async engine. | Blocks the threadpool thread for 4-20ms per refresh, starving other ticks. | Refactor to use `AsyncSession` and `await`. | M | 100% |
+| P-01 | **P2** | Performance | `backend/engine/orchestrator.py:86` | `asyncio.to_thread` for CPU-bound strategy logic hits the GIL. | No true parallelism for CPU-bound tasks, starving the I/O event loop. | Offload CPU-heavy math (Greeks) to Rust PyO3 extension with `allow_threads`. | M | 100% |
+| F-01 | **P2** | Frontend | `frontend/` (General) | Assuming standard React Query polling for high-freq P&L/LTP updates. | Re-render storms and backend DDOS. | Use WebSockets + Zustand selector subscriptions for targeted cell updates. | M | 90% |

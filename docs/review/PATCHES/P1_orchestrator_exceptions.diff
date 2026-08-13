@@ -1,0 +1,20 @@
+--- backend/engine/orchestrator.py
++++ backend/engine/orchestrator.py
+@@ -82,10 +82,16 @@
+                     
+                     # PERFORMANCE FIX: Route to ALL strategies in PARALLEL using asyncio.gather
+                     # This reduces latency from O(n*time_per_strategy) to O(max_strategy_time)
+-                    await asyncio.gather(*[
++                    results = await asyncio.gather(*[
+                         asyncio.to_thread(strategy.process_tick, tick_data)
+                         for strategy in self.active_strategies
+                     ], return_exceptions=True)  # Don't let one strategy failure crash others
++
++                    # P1 FIX: Explicitly log and alert on strategy crashes
++                    for strategy, result in zip(self.active_strategies, results):
++                        if isinstance(result, Exception):
++                            logger.critical(f"STRATEGY CRASH: {strategy.__class__.__name__} failed on tick processing: {repr(result)}")
++                            # Add additional webhook/alerting here if necessary
+                         
+                     # Publish to redis for the frontend dashboard (with error handling)
+                     if self.redis:
