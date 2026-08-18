@@ -1,12 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import {
+ useEffect, useState } from "react";
+import {
+ toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useProfile, useUpdateProfile } from "@/hooks/use-api";
+import {
+ Button } from "@/components/ui/button";
+import {
+ Input } from "@/components/ui/input";
+import {
+ Label } from "@/components/ui/label";
+import {
+ useProfile, useUpdateProfile } from "@/hooks/use-api";
 import type { Profile } from "@/lib/api";
 
 const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;

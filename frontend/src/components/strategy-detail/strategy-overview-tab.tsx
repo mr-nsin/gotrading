@@ -1,8 +1,11 @@
 "use client";
 
-import { KpiCard, Panel, EmptyState } from "@/components/ui-kit";
-import { Skeleton } from "@/components/ui/skeleton";
-import { formatINR } from "@/lib/format";
+import {
+ KpiCard, Panel, EmptyState } from "@/components/ui-kit";
+import {
+ Skeleton } from "@/components/ui/skeleton";
+import {
+ formatINR } from "@/lib/format";
 import type { Strategy } from "@/lib/api";
 
 interface StrategyOverviewTabProps {

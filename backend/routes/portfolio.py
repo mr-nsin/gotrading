@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select, func
 from typing import Dict, Any, List, Optional
 from database import get_session
@@ -304,7 +304,7 @@ def get_broker_capital_distribution(session: Session = Depends(get_session)) -> 
 @router.get("/net-worth-history")
 def get_net_worth_history(
     period: Optional[str] = None,
-    range: Optional[str] = None,  # Frontend sends 'range' parameter
+    time_range: Optional[str] = Query(None, alias="range"),  # Frontend sends 'range' parameter
     session: Session = Depends(get_session)
 ) -> List[Dict[str, Any]]:
     """Get historical net worth curve data"""
@@ -318,8 +318,8 @@ def get_net_worth_history(
     }
     
     # Accept both 'range' and 'period' parameters
-    time_range = range or period or "1M"
-    days = period_days.get(time_range, 30)
+    selected_range = time_range or period or "1M"
+    days = period_days.get(selected_range, 30)
     
     # Generate simulated historical data
     # In production, this would come from DailyPnl table

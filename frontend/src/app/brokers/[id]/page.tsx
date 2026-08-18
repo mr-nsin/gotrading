@@ -1,19 +1,31 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, RefreshCw, Unplug, Settings } from "lucide-react";
-import { toast } from "sonner";
-
-import { KpiCard, PageHeader, Panel, SideTag, StatusPill, Tag, EmptyState, TableSkeleton } from "@/components/ui-kit";
-import { DataTable, type Column } from "@/components/data-table";
-import { EquityChart } from "@/components/charts";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
+ useState } from "react";
+import Link from "next/link";
+import {
+ useParams, useRouter } from "next/navigation";
+import {
+ ArrowLeft, ArrowsClockwise as RefreshCw, Plugs as Unplug, Gear as Settings } from "@phosphor-icons/react";
+import {
+ toast } from "sonner";
+
+import {
+ KpiCard, PageHeader, Panel, SideTag, StatusPill, Tag, EmptyState, TableSkeleton } from "@/components/ui-kit";
+import {
+ DataTable, type Column } from "@/components/data-table";
+import {
+ EquityChart } from "@/components/charts";
+import {
+ Button } from "@/components/ui/button";
+import {
+ Skeleton } from "@/components/ui/skeleton";
+import {
+ Input } from "@/components/ui/input";
+import {
+ Label } from "@/components/ui/label";
+import {
+
   Dialog,
   DialogContent,
   DialogDescription,
@@ -22,8 +34,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+ Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+
   useBroker,
   useBrokerMarginHistory,
   useBrokerStrategies,
@@ -33,10 +47,13 @@ import {
   useDisconnectBroker,
   useUpdateBrokerCredentials,
 } from "@/hooks/use-api";
-import { useSettings } from "@/components/settings-provider";
-import { formatDateTime, formatINR, formatNum, formatTime, pnlClass } from "@/lib/format";
+import {
+ useSettings } from "@/components/settings-provider";
+import {
+ formatDateTime, formatINR, formatNum, formatTime, pnlClass } from "@/lib/format";
 import type { Order, Position } from "@/lib/api";
-import { BrokerLogo } from "@/components/broker-logo";
+import {
+ BrokerLogo } from "@/components/broker-logo";
 
 export default function BrokerDetailPage() {
   const params = useParams();
@@ -201,7 +218,7 @@ export default function BrokerDetailPage() {
         <PageHeader title="Broker not found" description="This broker account does not exist or was removed." />
         <Button asChild variant="outline" size="sm">
           <Link href="/brokers">
-            <ArrowLeft className="mr-2 size-4" />
+            <ArrowLeft className="mr-2 size-4" weight="bold" />
             All brokers
           </Link>
         </Button>
@@ -233,7 +250,7 @@ export default function BrokerDetailPage() {
             <Dialog open={reconfigureOpen} onOpenChange={setReconfigureOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm" className="h-7 gap-1 text-xs">
-                  <Settings className="size-3.5" />
+                  <Settings className="size-3.5" weight="bold" />
                   Reconfigure
                 </Button>
               </DialogTrigger>
@@ -298,7 +315,7 @@ export default function BrokerDetailPage() {
               onClick={handleReauthenticate}
               disabled={reauthMutation.isPending}
             >
-              <RefreshCw className="size-3.5" />
+              <RefreshCw className="size-3.5" weight="bold" />
               Re-authenticate
             </Button>
             <Button
@@ -308,12 +325,12 @@ export default function BrokerDetailPage() {
               onClick={handleDisconnect}
               disabled={disconnectMutation.isPending}
             >
-              <Unplug className="size-3.5" />
+              <Unplug className="size-3.5" weight="bold" />
               Disconnect
             </Button>
             <Button asChild variant="outline" size="sm" className="h-7 text-xs">
               <Link href="/brokers">
-                <ArrowLeft className="mr-1 size-3.5" />
+                <ArrowLeft className="mr-1 size-3.5" weight="bold" />
                 All brokers
               </Link>
             </Button>
@@ -386,39 +403,35 @@ export default function BrokerDetailPage() {
         </TabsList>
 
         <TabsContent value="orders" className="mt-3">
-          <Panel title="Order history" subtitle="Filtered to this broker" bodyClassName="" live>
-            {ordersLoading ? (
-              <TableSkeleton rows={8} cols={6} />
-            ) : ordersError ? (
-              <EmptyState message="Unable to load orders — backend endpoint pending" />
-            ) : (
-              <DataTable
-                columns={ordCols}
-                rows={orders}
-                rowKey={(o) => o.id}
-                maxHeight="24rem"
-                empty="No orders for this broker"
-              />
-            )}
-          </Panel>
+          {ordersLoading ? (
+            <TableSkeleton rows={8} cols={6} />
+          ) : ordersError ? (
+            <EmptyState message="Unable to load orders — backend endpoint pending" />
+          ) : (
+            <DataTable
+              columns={ordCols}
+              rows={orders}
+              rowKey={(o) => o.id}
+              maxHeight="24rem"
+              empty="No orders for this broker"
+            />
+          )}
         </TabsContent>
 
         <TabsContent value="positions" className="mt-3">
-          <Panel title="Positions" bodyClassName="" live>
-            {positionsLoading ? (
-              <TableSkeleton rows={8} cols={4} />
-            ) : positionsError ? (
-              <EmptyState message="Unable to load positions — backend endpoint pending" />
-            ) : (
-              <DataTable
-                columns={posCols}
-                rows={positions}
-                rowKey={(p) => p.id}
-                maxHeight="24rem"
-                empty="No positions for this broker"
-              />
-            )}
-          </Panel>
+          {positionsLoading ? (
+            <TableSkeleton rows={8} cols={4} />
+          ) : positionsError ? (
+            <EmptyState message="Unable to load positions — backend endpoint pending" />
+          ) : (
+            <DataTable
+              columns={posCols}
+              rows={positions}
+              rowKey={(p) => p.id}
+              maxHeight="24rem"
+              empty="No positions for this broker"
+            />
+          )}
         </TabsContent>
       </Tabs>
     </div>

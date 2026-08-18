@@ -1,0 +1,453 @@
+"use client";
+
+import { useMemo, useState, useCallback } from "react";
+import { toast } from "sonner";
+import { CaretRight as ChevronRight, XCircle } from "@phosphor-icons/react";
+
+import { PageHeader, Panel, StatusPill, SideTag, Tag, KpiCard } from "@/components/ui-kit";
+import { DataTable, type Column } from "@/components/data-table";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useSettings } from "@/components/settings-provider";
+import { usePositions, useSquareOffPosition, useStrategies, useBrokers } from "@/hooks/use-api";
+import { formatNum, formatPct, pnlClass } from "@/lib/format";
+import type { Position } from "@/lib/api";
+
+function FilterSelect({
+  value,
+  onChange,
+  options,
+  placeholder,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  options: Array<[string, string]>;
+  placeholder: string;
+}) {
+  return (
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger className="h-7 w-[150px] text-xs">
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent>
+        {options.map(([v, l]) => (
+          <SelectItem key={v} value={v}>
+            {l}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+
+function ConfirmButton({
+  label,
+  title,
+  body,
+  onConfirm,
+  disabled,
+}: {
+  label: string;
+  title: string;
+  body: string;
+  onConfirm: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline" size="sm" disabled={disabled} className="h-7 gap-1 text-xs text-loss">
+          <XCircle className="size-3.5" weight="fill" />
+          {label}
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{body}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            onClick={onConfirm}
+          >
+            Confirm square-off
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
+export default function PositionsPage() {
+  const { money } = useSettings();
+  const { data: positions = [], isLoading } = usePositions();
+  const { data: strategies = [] } = useStrategies();
+  const { data: brokers = [] } = useBrokers();
+  const squareOffMutation = useSquareOffPosition();
+
+  const [status, setStatus] = useState("open");
+  const [segment, setSegment] = useState("all");
+  const [strategy, setStrategy] = useState("all");
+  const [broker, setBroker] = useState("all");
+  const [grouped, setGrouped] = useState(false);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [collapsed, setCollapsed] = useState<string[]>([]);
+
+  const brokerById = (id: string) => brokers.find((b) => b.id === id);
+  const strategyById = (id: string) => strategies.find((s) => s.id === id);
+
+  const getStrategyName = (p: Position) =>
+    strategyById(p.strategyId || p.strategy_id || "")?.name || p.strategy_name || "Manual";
+
+  const getUnrealizedPnl = (p: Position) => p.unrealized ?? p.pnl ?? 0;
+  const getRealizedPnl = (p: Position) => p.realized ?? 0;
+  const getDayChange = (p: Position) => p.dayChange ?? p.pnl_pct ?? 0;
+
+  const rows = useMemo(
+    () =>
+      positions.filter((p) => {
+        const posStatus = (p.status || "").toLowerCase();
+        const matchStatus =
+          status === "all" ||
+          posStatus === status ||
+          (status === "open" && posStatus === "open") ||
+          (status === "closed" && posStatus === "closed");
+        const posSegment = p.segment || "";
+        const matchSegment =
+          segment === "all" ||
+          (segment === "fno" && posSegment !== "EQ") ||
+          (segment === "eq" && posSegment === "EQ");
+        const matchStrategy =
+          strategy === "all" ||
+          p.strategyId === strategy ||
+          p.strategy_id === strategy;
+        const matchBroker =
+          broker === "all" || p.brokerId === broker || p.broker_id === broker;
+        return matchStatus && matchSegment && matchStrategy && matchBroker;
+      }),
+    [positions, status, segment, strategy, broker]
+  );
+
+  const totalUnrealised = rows.reduce((a, p) => a + getUnrealizedPnl(p), 0);
+  const totalRealised = rows.reduce((a, p) => a + getRealizedPnl(p), 0);
+
+  const handleSquareOffSelected = async () => {
+    const openSelected = selected.filter((id) =>
+      rows.some((p) => p.id === id && (p.status || "").toLowerCase() === "open")
+    );
+    if (openSelected.length === 0) return;
+
+    try {
+      await Promise.all(openSelected.map((id) => squareOffMutation.mutateAsync(id)));
+      toast.error(`Square-off dispatched for ${openSelected.length} positions`);
+      setSelected([]);
+    } catch {
+      toast.error("Failed to square off some positions");
+    }
+  };
+
+  const handleSquareOffAll = async () => {
+    const openPositions = rows.filter(
+      (p) => (p.status || "").toLowerCase() === "open"
+    );
+    if (openPositions.length === 0) return;
+
+    try {
+      await Promise.all(openPositions.map((p) => squareOffMutation.mutateAsync(p.id)));
+      toast.error("Square-off all dispatched");
+    } catch {
+      toast.error("Failed to square off some positions");
+    }
+  };
+
+  const cols: Column<Position>[] = [
+    {
+      key: "sel",
+      header: "",
+      width: "34px",
+      cell: (p) => (
+        <Checkbox
+          checked={selected.includes(p.id)}
+          onCheckedChange={(v) =>
+            setSelected((s) => (v ? [...s, p.id] : s.filter((x) => x !== p.id)))
+          }
+          className="size-3.5"
+        />
+      ),
+    },
+    {
+      key: "sym",
+      header: "Instrument",
+      sortable: true,
+      sortValue: (p) => p.symbol,
+      cell: (p) => (
+        <div>
+          <div className="num font-medium">{p.symbol}</div>
+          <div className="mt-0.5 flex gap-1">
+            {p.segment && <Tag>{p.segment}</Tag>}
+            {p.type && <Tag>{p.type}</Tag>}
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: "strat",
+      header: "Strategy",
+      cell: (p) => <Tag>{getStrategyName(p)}</Tag>,
+    },
+    {
+      key: "broker",
+      header: "Broker",
+      cell: (p) => (
+        <Tag>
+          {brokerById(p.brokerId || p.broker_id || "")?.name || "—"}
+        </Tag>
+      ),
+    },
+    {
+      key: "side",
+      header: "Side",
+      cell: (p) => <SideTag side={p.side as "BUY" | "SELL"} />,
+    },
+    {
+      key: "qty",
+      header: "Qty",
+      align: "right",
+      sortable: true,
+      sortValue: (p) => p.quantity ?? p.qty ?? 0,
+      cell: (p) => <span className="num">{p.quantity ?? p.qty ?? 0}</span>,
+    },
+    {
+      key: "avg",
+      header: "Avg Price",
+      align: "right",
+      cell: (p) => (
+        <span className="num">{formatNum(p.entry_price ?? p.avgPrice ?? 0)}</span>
+      ),
+    },
+    {
+      key: "ltp",
+      header: "LTP",
+      align: "right",
+      cell: (p) => <span className="num">{formatNum(p.ltp || 0)}</span>,
+    },
+    {
+      key: "unreal",
+      header: "Unrealised",
+      align: "right",
+      sortable: true,
+      sortValue: (p) => getUnrealizedPnl(p),
+      cell: (p) => (
+        <span className={`num ${pnlClass(getUnrealizedPnl(p))}`}>
+          {money(getUnrealizedPnl(p), { sign: true, decimals: 0 })}
+        </span>
+      ),
+    },
+    {
+      key: "real",
+      header: "Realised",
+      align: "right",
+      sortable: true,
+      sortValue: (p) => getRealizedPnl(p),
+      cell: (p) => (
+        <span className={`num ${pnlClass(getRealizedPnl(p))}`}>
+          {money(getRealizedPnl(p), { sign: true, decimals: 0 })}
+        </span>
+      ),
+    },
+    {
+      key: "chg",
+      header: "Day %",
+      align: "right",
+      sortable: true,
+      sortValue: (p) => getDayChange(p),
+      cell: (p) => (
+        <span className={`num ${pnlClass(getDayChange(p))}`}>
+          {formatPct(getDayChange(p))}
+        </span>
+      ),
+    },
+    {
+      key: "status",
+      header: "Status",
+      cell: (p) => <StatusPill status={p.status} />,
+    },
+  ];
+
+  const groups = useMemo(() => {
+    const map = new Map<string, Position[]>();
+    rows.forEach((p) => {
+      const key = p.strategyId || p.strategy_id || "manual";
+      map.set(key, [...(map.get(key) ?? []), p]);
+    });
+    return [...map.entries()];
+  }, [rows]);
+
+  return (
+    <div className="space-y-3">
+      <PageHeader
+        title="Positions"
+        description="All open and closed positions across strategies and broker accounts"
+        actions={
+          <div className="flex gap-2">
+            <ConfirmButton
+              label={`Square off selected (${selected.length})`}
+              disabled={selected.length === 0}
+              title="Square off selected positions?"
+              body={`${selected.length} position(s) will be exited at market price immediately.`}
+              onConfirm={handleSquareOffSelected}
+            />
+            <ConfirmButton
+              label="Square off all"
+              title="Square off ALL open positions?"
+              body="Every open position across all strategies and brokers will be exited at market price."
+              onConfirm={handleSquareOffAll}
+            />
+          </div>
+        }
+      />
+
+      <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+        <KpiCard
+          loading={isLoading}
+          label="Positions"
+          value={`${rows.length}`}
+          sub={`${selected.length} selected`}
+        />
+        <KpiCard
+          loading={isLoading}
+          label="Unrealised P&L"
+          value={money(totalUnrealised, { sign: true, decimals: 0 })}
+          tone={totalUnrealised >= 0 ? "profit" : "loss"}
+        />
+        <KpiCard
+          loading={isLoading}
+          label="Realised P&L"
+          value={money(totalRealised, { sign: true, decimals: 0 })}
+          tone={totalRealised >= 0 ? "profit" : "loss"}
+        />
+        <KpiCard
+          loading={isLoading}
+          label="Net P&L"
+          value={money(totalUnrealised + totalRealised, { sign: true, decimals: 0 })}
+          tone={totalUnrealised + totalRealised >= 0 ? "profit" : "loss"}
+        />
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2">
+        <FilterSelect
+          value={status}
+          onChange={setStatus}
+          placeholder="Status"
+          options={[
+            ["all", "All status"],
+            ["open", "Open"],
+            ["closed", "Closed"],
+          ]}
+        />
+        <FilterSelect
+          value={segment}
+          onChange={setSegment}
+          placeholder="Segment"
+          options={[
+            ["all", "All segments"],
+            ["eq", "Equity"],
+            ["fno", "F&O"],
+          ]}
+        />
+        <FilterSelect
+          value={strategy}
+          onChange={setStrategy}
+          placeholder="Strategy"
+          options={[
+            ["all", "All strategies"],
+            ...strategies.map((s) => [s.id, s.name] as [string, string]),
+          ]}
+        />
+        <FilterSelect
+          value={broker}
+          onChange={setBroker}
+          placeholder="Broker"
+          options={[
+            ["all", "All brokers"],
+            ...brokers.map((b) => [b.id, b.name] as [string, string]),
+          ]}
+        />
+        <label className="flex cursor-pointer items-center gap-1.5 text-[11px] text-muted-foreground">
+          <Checkbox
+            checked={grouped}
+            onCheckedChange={(v) => setGrouped(!!v)}
+            className="size-3.5"
+          />
+          Group by strategy
+        </label>
+      </div>
+
+      {grouped ? (
+        <div className="space-y-2">
+          {groups.map(([sid, list]) => {
+            const sub = list.reduce((a, p) => a + getUnrealizedPnl(p), 0);
+            const isOpen = !collapsed.includes(sid);
+            const stratName = strategyById(sid)?.name || "Manual";
+            return (
+              <div key={sid} className="panel overflow-hidden">
+                <button
+                  onClick={() =>
+                    setCollapsed((c) =>
+                      isOpen ? [...c, sid] : c.filter((x) => x !== sid)
+                    )
+                  }
+                  className="flex w-full items-center gap-2 border-b border-border bg-surface-2 px-3 py-2 text-left"
+                >
+                  <ChevronRight
+                    className={`size-3.5 transition-transform ${isOpen ? "rotate-90" : ""}`}
+                  weight="bold" />
+                  <span className="text-[13px] font-semibold">{stratName}</span>
+                  <Tag>{list.length} positions</Tag>
+                  <span
+                    className={`num ml-auto text-[13px] font-semibold ${pnlClass(sub)}`}
+                  >
+                    {money(sub, { sign: true, decimals: 0 })}
+                  </span>
+                </button>
+                {isOpen && (
+                  <DataTable
+                    columns={cols}
+                    rows={list}
+                    rowKey={(p) => p.id}
+                    maxHeight="20rem"
+                    dense
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <Panel bodyClassName="" live>
+          <DataTable
+            columns={cols}
+            rows={rows}
+            rowKey={(p) => p.id}
+            maxHeight="calc(100vh - 22rem)"
+            loading={isLoading}
+          />
+        </Panel>
+      )}
+    </div>
+  );
+}

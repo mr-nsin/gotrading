@@ -1,12 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import {
+ useEffect, useState } from "react";
+import {
+ toast } from "sonner";
 
-import { Panel } from "@/components/ui-kit";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useNotificationSettings, useUpdateNotificationSettings } from "@/hooks/use-api";
+import {
+ Panel } from "@/components/ui-kit";
+import {
+ Button } from "@/components/ui/button";
+import {
+ Checkbox } from "@/components/ui/checkbox";
+import {
+ useNotificationSettings, useUpdateNotificationSettings } from "@/hooks/use-api";
 import type { ChannelMatrix, NotificationCategory, NotificationChannel } from "@/lib/api";
 
 const CHANNELS: { key: NotificationChannel; label: string }[] = [

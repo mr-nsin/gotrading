@@ -1,17 +1,28 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Download } from "lucide-react";
-import { toast } from "sonner";
+import {
+ useMemo, useState } from "react";
+import {
+ Download } from "@phosphor-icons/react";
+import {
+ toast } from "sonner";
 
-import { PageHeader, Panel, StatusPill, Tag } from "@/components/ui-kit";
-import { DataTable, type Column } from "@/components/data-table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { formatDateTime } from "@/lib/format";
-import { useLogs, useStrategies, useBrokers } from "@/hooks/use-api";
+import {
+ PageHeader, Panel, StatusPill, Tag } from "@/components/ui-kit";
+import {
+ DataTable, type Column } from "@/components/data-table";
+import {
+ Button } from "@/components/ui/button";
+import {
+ Input } from "@/components/ui/input";
+import {
+ Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+ formatDateTime } from "@/lib/format";
+import {
+ useLogs, useStrategies, useBrokers } from "@/hooks/use-api";
 import type { LogEntry } from "@/lib/api";
+import { useTabLoadTime } from "@/hooks/use-tab-load-time";
 
 const CHIPS: Array<[string, string]> = [
   ["all", "All logs"],
@@ -26,6 +37,8 @@ export default function LogsPage() {
   const { data: logs = [], isLoading } = useLogs();
   const { data: strategies = [] } = useStrategies();
   const { data: brokers = [] } = useBrokers();
+
+  useTabLoadTime("Logs", isLoading);
 
   const [source, setSource] = useState("all");
   const [level, setLevel] = useState("all");
@@ -86,7 +99,7 @@ export default function LogsPage() {
         description="Every execution, connectivity and system event emitted by the engine"
         actions={
           <Button variant="outline" size="sm" className="h-7 gap-1 text-xs" onClick={() => toast.success("Exporting logs as CSV…")}>
-            <Download className="size-3.5" /> Export
+            <Download className="size-3.5" weight="bold" /> Export
           </Button>
         }
       />
@@ -112,9 +125,7 @@ export default function LogsPage() {
         <span className="num ml-auto text-[11px] text-muted-foreground">{rows.length} events</span>
       </div>
 
-      <Panel bodyClassName="" live>
-        <DataTable columns={cols} rows={rows} rowKey={(l) => l.id} maxHeight="calc(100vh - 18rem)" loading={isLoading} dense />
-      </Panel>
+      <DataTable columns={cols} rows={rows} rowKey={(l) => l.id} maxHeight="calc(100vh - 18rem)" loading={isLoading} dense />
     </div>
   );
 }

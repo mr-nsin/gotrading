@@ -314,3 +314,7 @@ app.include_router(market.router)
 @app.get("/")
 def read_root():
     return {"message": "Welcome to 3Option API"}
+
+from middleware.timing import TimingMiddleware
+from middleware.timing import TimingMiddleware
+app.add_middleware(TimingMiddleware)

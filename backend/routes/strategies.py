@@ -84,7 +84,7 @@ def generate_spark_data(pnl: float) -> List[float]:
     return data
 
 
-def strategy_to_response(s: Strategy, session: Session) -> Dict[str, Any]:
+def strategy_to_response(s: Strategy, session: Session, active_broker_name: str = None, precalc_open_positions: int = None) -> Dict[str, Any]:
     """Convert Strategy model to enhanced API response"""
     # Parse JSON fields
     try:
@@ -128,11 +128,11 @@ def strategy_to_response(s: Strategy, session: Session) -> Dict[str, Any]:
         spark = generate_spark_data(s.total_pnl)
     
     # Count open positions for this strategy
-    open_positions = session.exec(
+    open_positions = precalc_open_positions if precalc_open_positions is not None else (session.exec(
         select(func.count(VirtualTrade.id))
         .where(VirtualTrade.strategy_name == s.name)
         .where(VirtualTrade.status == "OPEN")
-    ).one() or 0
+    ).one() or 0)
     
     # Map status to UI format
     status_map = {
@@ -150,7 +150,7 @@ def strategy_to_response(s: Strategy, session: Session) -> Dict[str, Any]:
         "status": status_map.get(s.status, s.status.lower()),
         "segment": s.segment or "Options",
         "description": s.description or f"Algorithmic trading strategy for {s.instrument}",
-        "brokers": brokers if brokers else [get_active_broker_name(session).lower().replace(" ", "")],
+        "brokers": brokers if brokers else [(active_broker_name or get_active_broker_name(session)).lower().replace(" ", "")],
         "todayPnl": round(s.todays_pnl, 2),
         "overallPnl": round(s.total_pnl, 2),
         "openPositions": s.open_positions if s.open_positions else open_positions,
@@ -345,7 +345,18 @@ def list_strategies(session: Session = Depends(get_session)) -> List[Dict[str, A
     strategies = session.exec(select(Strategy)).all()
     if not strategies:
         strategies = seed_default_strategies(session)
-    return [strategy_to_response(s, session) for s in strategies]
+        
+    broker_name = get_active_broker_name(session)
+    
+    # Pre-calculate all open positions in one query to avoid N+1 problem
+    positions = session.exec(
+        select(VirtualTrade.strategy_name, func.count(VirtualTrade.id))
+        .where(VirtualTrade.status == "OPEN")
+        .group_by(VirtualTrade.strategy_name)
+    ).all()
+    pos_map = {name: count for name, count in positions}
+    
+    return [strategy_to_response(s, session, active_broker_name=broker_name, precalc_open_positions=pos_map.get(s.name, 0)) for s in strategies]
 
 
 @router.post("")

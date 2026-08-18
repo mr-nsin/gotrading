@@ -1,24 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import {
-  Activity,
-  BarChart3,
-  Bell,
-  Blocks,
-  Briefcase,
-  FileText,
-  FlaskConical,
-  LayoutDashboard,
-  ListOrdered,
-  ShieldAlert,
-  User,
-  Webhook,
-  Wallet,
-} from "lucide-react";
+ useEffect, useState } from "react";
+import {
+ useRouter } from "next/navigation";
+import {
+
+  ChartLineUp as Activity, ChartBar as BarChart3, Bell, Cube as Blocks, Briefcase, FileText, Flask, SquaresFour as LayoutDashboard, ListBullets as ListOrdered, WarningCircle as ShieldAlert, User, Link as WebhookIcon, Wallet,  } from "@phosphor-icons/react";
 
 import {
+
   CommandDialog,
   CommandEmpty,
   CommandGroup,
@@ -28,7 +19,8 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command";
-import { useStrategies, useBrokers } from "@/hooks/use-api";
+import {
+ useStrategies, useBrokers } from "@/hooks/use-api";
 
 const navItems = [
   { label: "Dashboard", to: "/", icon: LayoutDashboard },
@@ -38,11 +30,11 @@ const navItems = [
   { label: "Orderbook", to: "/orders", icon: ListOrdered },
   { label: "Portfolio", to: "/portfolio", icon: Wallet },
   { label: "Brokers", to: "/brokers", icon: Briefcase },
-  { label: "Backtesting", to: "/backtesting", icon: FlaskConical },
+  { label: "Backtesting", to: "/backtesting", icon: Flask },
   { label: "Reports", to: "/reports", icon: BarChart3 },
   { label: "Logs", to: "/logs", icon: FileText },
   { label: "Notifications", to: "/notifications", icon: Bell },
-  { label: "API & Webhooks", to: "/api-webhooks", icon: Webhook },
+  { label: "API & Webhooks", to: "/api-webhooks", icon: WebhookIcon },
   { label: "Risk Settings", to: "/risk", icon: ShieldAlert },
   { label: "Profile", to: "/profile", icon: User },
 ] as const;

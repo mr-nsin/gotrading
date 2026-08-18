@@ -1,12 +1,18 @@
 "use client";
 
-import { User, Mail, Shield, Monitor, Trash2 } from "lucide-react";
-import { toast } from "sonner";
+import {
+ User, EnvelopeSimple as Mail, Shield, Monitor, Trash as Trash2 } from "@phosphor-icons/react";
+import {
+ toast } from "sonner";
 
-import { PageHeader, Panel, StatusPill } from "@/components/ui-kit";
-import { Button } from "@/components/ui/button";
-import { useProfile, useSessions, useRevokeSession } from "@/hooks/use-api";
-import { formatDateTime } from "@/lib/format";
+import {
+ PageHeader, Panel, StatusPill } from "@/components/ui-kit";
+import {
+ Button } from "@/components/ui/button";
+import {
+ useProfile, useSessions, useRevokeSession } from "@/hooks/use-api";
+import {
+ formatDateTime } from "@/lib/format";
 
 export default function ProfilePage() {
   const { data: profile, isLoading: profileLoading } = useProfile();
@@ -40,7 +46,7 @@ export default function ProfilePage() {
           <div className="space-y-4">
             <div className="flex items-center gap-4">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                <User className="size-8 text-primary" />
+                <User className="size-8 text-primary" weight="duotone" />
               </div>
               <div>
                 <div className="font-semibold">{profile?.email}</div>
@@ -52,7 +58,7 @@ export default function ProfilePage() {
 
             <div className="border-t border-border pt-4 space-y-3">
               <div className="flex items-center gap-3">
-                <Mail className="size-4 text-muted-foreground" />
+                <Mail className="size-4 text-muted-foreground" weight="duotone" />
                 <div>
                   <div className="text-sm font-medium">Email</div>
                   <div className="text-xs text-muted-foreground">{profile?.email}</div>
@@ -60,7 +66,7 @@ export default function ProfilePage() {
               </div>
 
               <div className="flex items-center gap-3">
-                <Shield className="size-4 text-muted-foreground" />
+                <Shield className="size-4 text-muted-foreground" weight="duotone" />
                 <div>
                   <div className="text-sm font-medium">Subscription</div>
                   <div className="text-xs text-muted-foreground">
@@ -70,7 +76,7 @@ export default function ProfilePage() {
               </div>
 
               <div className="flex items-center gap-3">
-                <Monitor className="size-4 text-muted-foreground" />
+                <Monitor className="size-4 text-muted-foreground" weight="duotone" />
                 <div>
                   <div className="text-sm font-medium">Member Since</div>
                   <div className="text-xs text-muted-foreground">
@@ -95,7 +101,7 @@ export default function ProfilePage() {
                   className="flex items-center justify-between rounded-lg border border-border p-3"
                 >
                   <div className="flex items-center gap-3">
-                    <Monitor className="size-5 text-muted-foreground" />
+                    <Monitor className="size-5 text-muted-foreground" weight="duotone" />
                     <div>
                       <div className="text-sm font-medium">{session.device}</div>
                       <div className="text-xs text-muted-foreground">
@@ -118,7 +124,7 @@ export default function ProfilePage() {
                       onClick={() => handleRevokeSession(session.id)}
                       disabled={revokeMutation.isPending}
                     >
-                      <Trash2 className="size-4" />
+                      <Trash2 className="size-4" weight="bold" />
                     </Button>
                   )}
                 </div>

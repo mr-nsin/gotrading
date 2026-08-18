@@ -1,14 +1,22 @@
 "use client";
 
-import { type ReactNode } from "react";
-import { ArrowDownRight, ArrowUpRight } from "lucide-react";
-import { Area, AreaChart, ResponsiveContainer } from "recharts";
+import {
+ type ReactNode } from "react";
+import {
+ ArrowDownRight, ArrowUpRight } from "@phosphor-icons/react";
+import {
+ Area, AreaChart, ResponsiveContainer } from "recharts";
 
-import { cn } from "@/lib/utils";
-import { formatPct, pnlClass } from "@/lib/format";
-import { Skeleton } from "@/components/ui/skeleton";
-import { HoverLift, TickerValue } from "@/components/motion";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import {
+ cn } from "@/lib/utils";
+import {
+ formatPct, pnlClass } from "@/lib/format";
+import {
+ Skeleton } from "@/components/ui/skeleton";
+import {
+ HoverLift, TickerValue } from "@/components/motion";
+import {
+ Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
 export function Panel({
   title,
@@ -88,7 +96,7 @@ export function KpiCard({
               <div className="flex items-center gap-2">
                 {typeof delta === "number" && (
                   <span className={cn("num inline-flex items-center gap-0.5 text-[11px] font-medium", pnlClass(delta))}>
-                    {delta >= 0 ? <ArrowUpRight className="size-3" /> : <ArrowDownRight className="size-3" />}
+                    {delta >= 0 ? <ArrowUpRight className="size-3" weight="bold" /> : <ArrowDownRight className="size-3" weight="bold" />}
                     {formatPct(delta)}
                   </span>
                 )}
@@ -130,26 +138,26 @@ export function Sparkline({ data, positive }: { data: number[]; positive: boolea
 }
 
 const statusStyles: Record<string, string> = {
-  live: "bg-profit-muted text-profit border-profit/30",
-  connected: "bg-profit-muted text-profit border-profit/30",
-  executed: "bg-profit-muted text-profit border-profit/30",
-  active: "bg-profit-muted text-profit border-profit/30",
-  completed: "bg-profit-muted text-profit border-profit/30",
-  open: "bg-profit-muted text-profit border-profit/30",
-  paused: "bg-warn-muted text-warn border-warn/30",
-  pending: "bg-warn-muted text-warn border-warn/30",
-  running: "bg-warn-muted text-warn border-warn/30",
-  warning: "bg-warn-muted text-warn border-warn/30",
-  token_expiring: "bg-warn-muted text-warn border-warn/30",
-  backtest: "bg-primary/15 text-primary border-primary/30",
-  info: "bg-primary/15 text-primary border-primary/30",
-  rejected: "bg-loss-muted text-loss border-loss/30",
-  error: "bg-loss-muted text-loss border-loss/30",
-  critical: "bg-loss-muted text-loss border-loss/30",
-  disconnected: "bg-loss-muted text-loss border-loss/30",
-  draft: "bg-muted text-muted-foreground border-border",
-  cancelled: "bg-muted text-muted-foreground border-border",
-  closed: "bg-muted text-muted-foreground border-border",
+  live: "text-profit",
+  connected: "text-profit",
+  executed: "text-profit",
+  active: "text-profit",
+  completed: "text-profit",
+  open: "text-profit",
+  paused: "text-warn",
+  pending: "text-warn",
+  running: "text-warn",
+  warning: "text-warn",
+  token_expiring: "text-warn",
+  backtest: "text-primary",
+  info: "text-primary",
+  rejected: "text-loss",
+  error: "text-loss",
+  critical: "text-loss",
+  disconnected: "text-loss",
+  draft: "text-muted-foreground",
+  cancelled: "text-muted-foreground",
+  closed: "text-muted-foreground",
 };
 
 export function StatusPill({ status, label, dot, className }: { status: string; label?: string; dot?: boolean; className?: string }) {
@@ -157,8 +165,8 @@ export function StatusPill({ status, label, dot, className }: { status: string; 
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide",
-        statusStyles[key] ?? "bg-muted text-muted-foreground border-border",
+        "inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide",
+        statusStyles[key] ?? "text-muted-foreground",
         className
       )}
     >
@@ -172,8 +180,8 @@ export function SideTag({ side }: { side: "BUY" | "SELL" }) {
   return (
     <span
       className={cn(
-        "num inline-flex rounded px-1.5 py-0.5 text-[10px] font-semibold",
-        side === "BUY" ? "bg-profit-muted text-profit" : "bg-loss-muted text-loss",
+        "num inline-flex text-xs font-semibold",
+        side === "BUY" ? "text-profit" : "text-loss",
       )}
     >
       {side}
@@ -185,7 +193,7 @@ export function Tag({ children, className }: { children: ReactNode; className?: 
   return (
     <span
       className={cn(
-        "inline-flex max-w-full truncate rounded border border-border bg-surface-2 px-1.5 py-0.5 text-[10px] text-muted-foreground",
+        "inline-flex max-w-full truncate text-[13px] text-muted-foreground",
         className,
       )}
     >

@@ -1,8 +1,10 @@
 "use client";
 
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+ Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import { INDICATORS } from "./constants";
+import {
+ INDICATORS } from "./constants";
 
 interface IndicatorSelectProps {
   value: string;

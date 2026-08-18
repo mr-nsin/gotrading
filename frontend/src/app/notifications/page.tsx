@@ -1,18 +1,26 @@
 "use client";
 
-import { Bell, Check, CheckCheck } from "lucide-react";
-import { toast } from "sonner";
-
-import { PageHeader, Panel, StatusPill } from "@/components/ui-kit";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
+ Bell, Check, Checks as CheckCheck } from "@phosphor-icons/react";
+import {
+ toast } from "sonner";
+
+import {
+ PageHeader, Panel, StatusPill } from "@/components/ui-kit";
+import {
+ Button } from "@/components/ui/button";
+import {
+ ScrollArea } from "@/components/ui/scroll-area";
+import {
+
   useNotifications,
   useMarkNotificationRead,
   useMarkAllNotificationsRead,
 } from "@/hooks/use-api";
-import { formatRelativeTime } from "@/lib/format";
-import { cn } from "@/lib/utils";
+import {
+ formatRelativeTime } from "@/lib/format";
+import {
+ cn } from "@/lib/utils";
 
 export default function NotificationsPage() {
   const { data: notifications = [], isLoading } = useNotifications();
@@ -51,7 +59,7 @@ export default function NotificationsPage() {
               onClick={handleMarkAllRead}
               disabled={markAllReadMutation.isPending}
             >
-              <CheckCheck className="mr-2 size-4" />
+              <CheckCheck className="mr-2 size-4" weight="bold" />
               Mark all read
             </Button>
           )
@@ -90,7 +98,7 @@ export default function NotificationsPage() {
           </div>
         ) : notifications.length === 0 ? (
           <div className="flex h-32 flex-col items-center justify-center text-muted-foreground">
-            <Bell className="mb-2 size-8 opacity-50" />
+            <Bell className="mb-2 size-8 opacity-50" weight="duotone" />
             <span className="text-xs">No notifications</span>
           </div>
         ) : (
@@ -121,7 +129,7 @@ export default function NotificationsPage() {
                           className="h-7 w-7 shrink-0"
                           onClick={() => handleMarkRead(n.id)}
                         >
-                          <Check className="size-3.5" />
+                          <Check className="size-3.5" weight="bold" />
                         </Button>
                       )}
                     </div>

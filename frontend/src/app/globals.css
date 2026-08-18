@@ -245,3 +245,61 @@
     background-color: transparent;
   }
 }
+
+@layer utilities {
+  .terminal-grid {
+    --grid-bg:            #0A0E14;
+    --grid-surface:       #0F1420;
+    --row-bg:             #0F1420;
+    --row-bg-alt:         #131926;
+    --row-bg-hover:       #182031;
+    --row-bg-selected:    #1B2A3D;
+    --header-bg:          #0B0F17;
+    --border-hairline:    #1E2635;
+    --border-strong:      #2A3446;
+    --text-primary:       #E7EAF0;
+    --text-secondary:     #8B93A7;
+    --text-muted:         #5A6478;
+    --text-on-accent:     #0A0E14;
+    --accent-amber:       #F5A623;
+    --accent-amber-dim:   #7A5716;
+    --positive:           #1FCE7A;
+    --positive-bg:        rgba(31, 206, 122, 0.10);
+    --positive-flash:     rgba(31, 206, 122, 0.35);
+    --negative:           #FF4D5E;
+    --negative-bg:        rgba(255, 77, 94, 0.10);
+    --negative-flash:     rgba(255, 77, 94, 0.35);
+    --neutral:            #8B93A7;
+    --status-open:        #3AA0FF;
+    --status-open-bg:     rgba(58, 160, 255, 0.12);
+    --status-pending:     #F5A623;
+    --status-pending-bg:  rgba(245, 166, 35, 0.12);
+    --status-closed:      #6B7684;
+    --status-closed-bg:   rgba(107, 118, 132, 0.14);
+    --status-rejected:    #FF4D5E;
+    --status-rejected-bg: rgba(255, 77, 94, 0.12);
+    --side-buy:           #1FCE7A;
+    --side-sell:          #FF4D5E;
+  }
+
+  @keyframes tick-flash-up {
+    0%   { background-color: var(--positive-flash); }
+    100% { background-color: transparent; }
+  }
+  @keyframes tick-flash-down {
+    0%   { background-color: var(--negative-flash); }
+    100% { background-color: transparent; }
+  }
+  .ag-cell.flash-up   { animation: tick-flash-up 500ms ease-out; }
+  .ag-cell.flash-down { animation: tick-flash-down 500ms ease-out; }
+  
+  .cell-numeric {
+    font-family: var(--font-mono), monospace;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  .cell-symbol {
+    font-family: var(--font-mono), monospace;
+    font-weight: 600;
+  }
+}

@@ -1,11 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { CalendarIcon, Moon, Power, Search, Sun } from "lucide-react";
-import { format } from "date-fns";
-
-import { Button } from "@/components/ui/button";
 import {
+ useEffect, useState } from "react";
+import {
+ CalendarIcon, Moon, Power, MagnifyingGlass as Search, Sun } from "@phosphor-icons/react";
+import {
+ format } from "date-fns";
+
+import {
+ Button } from "@/components/ui/button";
+import {
+
   Select,
   SelectContent,
   SelectItem,
@@ -13,12 +18,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
 import {
+ Calendar } from "@/components/ui/calendar";
+import {
+
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -29,14 +37,21 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { cn } from "@/lib/utils";
-import { toast } from "sonner";
+import {
+ cn } from "@/lib/utils";
+import {
+ toast } from "sonner";
 
-import { useSettings } from "@/components/settings-provider";
-import { useDashboardTotals, useStrategies, useBrokers, useEmergencyStop } from "@/hooks/use-api";
-import { formatPct, pnlClass } from "@/lib/format";
-import { StatusPill } from "@/components/ui-kit";
-import { BrokerLogo } from "@/components/broker-logo";
+import {
+ useSettings } from "@/components/settings-provider";
+import {
+ useDashboardTotals, useStrategies, useBrokers, useEmergencyStop } from "@/hooks/use-api";
+import {
+ formatPct, pnlClass } from "@/lib/format";
+import {
+ StatusPill } from "@/components/ui-kit";
+import {
+ BrokerLogo } from "@/components/broker-logo";
 
 function Clock() {
   const [now, setNow] = useState<string | null>(null);
@@ -143,7 +158,7 @@ export function TopBar() {
                   !date && "text-muted-foreground"
                 )}
               >
-                <CalendarIcon className="mr-2 h-4 w-4" />
+                <CalendarIcon className="mr-2 h-4 w-4" weight="duotone" />
                 {date ? format(date, "MMM dd, yyyy") : <span>Pick a date</span>}
               </Button>
             </PopoverTrigger>
@@ -196,13 +211,13 @@ export function TopBar() {
           </Button>
 
           <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={toggleTheme} aria-label="Toggle theme">
-            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            {theme === "dark" ? <Sun className="h-4 w-4" weight="duotone" /> : <Moon className="h-4 w-4" weight="duotone" />}
           </Button>
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="destructive" size="sm" className="h-8 gap-1.5 px-3 text-xs font-bold shadow-sm">
-                <Power className="size-3.5" />
+                <Power className="size-3.5" weight="bold" />
                 <span className="hidden sm:inline">KILL</span>
               </Button>
             </AlertDialogTrigger>

@@ -1,4 +1,5 @@
-import { format, parseISO } from "date-fns";
+import {
+ format, parseISO } from "date-fns";
 
 export type MoneyOpts = { sign?: boolean; decimals?: number; compact?: boolean };
 export type MoneyOptions = MoneyOpts;

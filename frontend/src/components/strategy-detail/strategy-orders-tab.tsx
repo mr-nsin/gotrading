@@ -1,7 +1,9 @@
 "use client";
 
-import { Panel, EmptyState, TableSkeleton } from "@/components/ui-kit";
-import { useStrategyOrders } from "@/hooks/use-api";
+import {
+ Panel, EmptyState, TableSkeleton } from "@/components/ui-kit";
+import {
+ useStrategyOrders } from "@/hooks/use-api";
 
 interface StrategyOrdersTabProps {
   strategyId: string;

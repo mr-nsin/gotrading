@@ -1,7 +1,9 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/lib/api';
+import {
+ useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+ api } from '@/lib/api';
 import type { Strategy, RiskSettings, NotificationSettings, BrokerRiskSettings, Webhook, ApiKey } from '@/lib/api';
 
 // Dashboard hooks
@@ -9,7 +11,7 @@ export function useDashboardTotals() {
   return useQuery({
     queryKey: ['dashboard', 'totals'],
     queryFn: api.getDashboardTotals,
-    refetchInterval: 5000,
+    // Polling removed: Using Zustand WebSocket for real-time updates
   });
 }
 
@@ -152,7 +154,7 @@ export function usePositions() {
   return useQuery({
     queryKey: ['positions'],
     queryFn: api.getPositions,
-    refetchInterval: 5000,
+    // Polling removed: Using WebSocket stream
   });
 }
 
@@ -172,7 +174,7 @@ export function useOrders() {
   return useQuery({
     queryKey: ['orders'],
     queryFn: api.getOrders,
-    refetchInterval: 5000,
+    // Polling removed: Wait for ORDER_ACK via WebSocket instead
   });
 }
 

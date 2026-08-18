@@ -1,14 +1,22 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-
-import { Panel, Tag } from "@/components/ui-kit";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
+ zodResolver } from "@hookform/resolvers/zod";
+import {
+ useRouter } from "next/navigation";
+import {
+ useForm } from "react-hook-form";
+import {
+ toast } from "sonner";
+
+import {
+ Panel, Tag } from "@/components/ui-kit";
+import {
+ Button } from "@/components/ui/button";
+import {
+ Checkbox } from "@/components/ui/checkbox";
+import {
+
   Form,
   FormControl,
   FormField,
@@ -16,21 +24,34 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import { useBrokers, useCreateStrategy, useUpdateStrategy } from "@/hooks/use-api";
+import {
+ Input } from "@/components/ui/input";
+import {
+ Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+ Switch } from "@/components/ui/switch";
+import {
+ Textarea } from "@/components/ui/textarea";
+import {
+ useBrokers, useCreateStrategy, useUpdateStrategy } from "@/hooks/use-api";
 import type { Strategy } from "@/lib/api";
 
-import { MODES, SEGMENTS } from "./constants";
-import { OptionsConfig } from "./options-config";
-import { RiskConfig } from "./risk-config";
-import { RuleBuilder } from "./rule-builder";
-import { ScheduleConfig } from "./schedule-config";
-import { type StrategyFormValues, strategyFormSchema } from "./schema";
-import { SizingConfig } from "./sizing-config";
-import { getDefaultFormValues, toApiPayload } from "./utils";
+import {
+ MODES, SEGMENTS } from "./constants";
+import {
+ OptionsConfig } from "./options-config";
+import {
+ RiskConfig } from "./risk-config";
+import {
+ RuleBuilder } from "./rule-builder";
+import {
+ ScheduleConfig } from "./schedule-config";
+import {
+ type StrategyFormValues, strategyFormSchema } from "./schema";
+import {
+ SizingConfig } from "./sizing-config";
+import {
+ getDefaultFormValues, toApiPayload } from "./utils";
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (

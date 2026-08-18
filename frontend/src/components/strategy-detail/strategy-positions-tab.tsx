@@ -1,7 +1,9 @@
 "use client";
 
-import { Panel, EmptyState, TableSkeleton } from "@/components/ui-kit";
-import { useStrategyPositions } from "@/hooks/use-api";
+import {
+ Panel, EmptyState, TableSkeleton } from "@/components/ui-kit";
+import {
+ useStrategyPositions } from "@/hooks/use-api";
 
 interface StrategyPositionsTabProps {
   strategyId: string;

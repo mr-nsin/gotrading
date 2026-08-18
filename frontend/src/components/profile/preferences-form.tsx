@@ -1,20 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-
-import { useSettings } from "@/components/settings-provider";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import {
+ useEffect, useState } from "react";
+import {
+ toast } from "sonner";
+
+import {
+ useSettings } from "@/components/settings-provider";
+import {
+ Button } from "@/components/ui/button";
+import {
+ Label } from "@/components/ui/label";
+import {
+
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { usePreferences, useUpdatePreferences } from "@/hooks/use-api";
+import {
+ Switch } from "@/components/ui/switch";
+import {
+ usePreferences, useUpdatePreferences } from "@/hooks/use-api";
 
 const TIMEZONES = [
   { value: "Asia/Kolkata", label: "Asia/Kolkata (IST)" },

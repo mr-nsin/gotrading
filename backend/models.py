@@ -238,10 +238,22 @@ class NotificationSettings(SQLModel, table=True):
 
 
 class Instrument(SQLModel, table=True):
-    """Market instrument data cache"""
+    """Market instrument data cache mapping symbols to broker tokens"""
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    symbol: str = Field(unique=True, index=True)
+    symbol: str = Field(unique=True, index=True) # e.g. "RELIANCE-EQ" or "RELIANCE"
     segment: str = Field(default="EQ")  # EQ, FUT, OPT
+    exchange: str = Field(default="NSE") # NSE, NFO, BSE
+    
+    # Token Mappings for different brokers
+    angelone_token: Optional[str] = None
+    zerodha_token: Optional[str] = None
+    dhan_token: Optional[str] = None
+    fyers_token: Optional[str] = None
+    upstox_token: Optional[str] = None
+    aliceblue_token: Optional[str] = None
+    fivepaisa_token: Optional[str] = None
+    kotakneo_token: Optional[str] = None
+    
     ltp: float = Field(default=0.0)
     change_pct: float = Field(default=0.0)
     updated_at: datetime = Field(default_factory=datetime.utcnow)

@@ -1,13 +1,19 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
+import {
+ Trash as Trash2 } from "@phosphor-icons/react";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+ Button } from "@/components/ui/button";
+import {
+ Input } from "@/components/ui/input";
+import {
+ Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import { OPERATORS } from "./constants";
-import { IndicatorSelect } from "./indicator-select";
+import {
+ OPERATORS } from "./constants";
+import {
+ IndicatorSelect } from "./indicator-select";
 import type { RuleFormValues } from "./schema";
 
 interface ConditionBlockProps {
@@ -53,7 +59,7 @@ export function ConditionBlock({ rule, onChange, onDelete }: ConditionBlockProps
         className="ml-auto size-6 text-loss"
         onClick={onDelete}
       >
-        <Trash2 className="size-3.5" />
+        <Trash2 className="size-3.5" weight="bold" />
       </Button>
     </div>
   );

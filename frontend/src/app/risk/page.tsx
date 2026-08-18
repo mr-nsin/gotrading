@@ -1,13 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { AlertTriangle, Shield, Power } from "lucide-react";
-import { toast } from "sonner";
+import {
+ useState } from "react";
+import {
+ Warning as AlertTriangle, Shield, Power } from "@phosphor-icons/react";
+import {
+ toast } from "sonner";
 
-import { PageHeader, Panel } from "@/components/ui-kit";
-import { Button } from "@/components/ui/button";
-import { useRiskSettings, useUpdateRiskSettings, useEmergencyStop } from "@/hooks/use-api";
-import { formatINR } from "@/lib/format";
+import {
+ PageHeader, Panel } from "@/components/ui-kit";
+import {
+ Button } from "@/components/ui/button";
+import {
+ useRiskSettings, useUpdateRiskSettings, useEmergencyStop } from "@/hooks/use-api";
+import {
+ formatINR } from "@/lib/format";
 
 export default function RiskPage() {
   const { data: settings, isLoading } = useRiskSettings();
@@ -61,7 +68,7 @@ export default function RiskPage() {
             onClick={handleEmergencyStop}
             disabled={emergencyStopMutation.isPending}
           >
-            <Power className="mr-2 size-4" />
+            <Power className="mr-2 size-4" weight="bold" />
             Emergency Stop
           </Button>
         }
@@ -118,7 +125,7 @@ export default function RiskPage() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Shield className="size-4 text-profit" />
+                <Shield className="size-4 text-profit" weight="duotone" />
                 <span className="text-sm font-medium text-profit">
                   {settings?.circuit_breaker_enabled ? "Active" : "Disabled"}
                 </span>
@@ -160,7 +167,7 @@ export default function RiskPage() {
       >
         <div className="flex items-start gap-4">
           <div className="rounded-full bg-destructive/10 p-3">
-            <AlertTriangle className="size-6 text-destructive" />
+            <AlertTriangle className="size-6 text-destructive" weight="duotone" />
           </div>
           <div className="flex-1">
             <h3 className="font-semibold">Kill Switch</h3>
@@ -174,7 +181,7 @@ export default function RiskPage() {
               onClick={handleEmergencyStop}
               disabled={emergencyStopMutation.isPending}
             >
-              <Power className="mr-2 size-4" />
+              <Power className="mr-2 size-4" weight="bold" />
               Activate Emergency Stop
             </Button>
           </div>

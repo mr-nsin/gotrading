@@ -1,21 +1,34 @@
 "use client";
 
-import { useState } from "react";
-import { Copy, KeyRound, Plus, RefreshCw, Trash2, Webhook as WebhookIcon } from "lucide-react";
-import { toast } from "sonner";
-
-import { KpiCard, PageHeader, Panel, StatusPill, Tag, TableSkeleton } from "@/components/ui-kit";
-import { DataTable, type Column } from "@/components/data-table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
+ useState } from "react";
+import {
+ Copy, Key as KeyRound, Plus, ArrowsClockwise as RefreshCw, Trash as Trash2, Link as WebhookIcon } from "@phosphor-icons/react";
+import {
+ toast } from "sonner";
+
+import {
+ KpiCard, PageHeader, Panel, StatusPill, Tag, TableSkeleton } from "@/components/ui-kit";
+import {
+ DataTable, type Column } from "@/components/data-table";
+import {
+ Button } from "@/components/ui/button";
+import {
+ Input } from "@/components/ui/input";
+import {
+ Label } from "@/components/ui/label";
+import {
+ Switch } from "@/components/ui/switch";
+import {
+ Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
-import { formatDateTime, formatNum } from "@/lib/format";
 import {
+ formatDateTime, formatNum } from "@/lib/format";
+import {
+
   useWebhooks,
   useCreateWebhook,
   useUpdateWebhook,
@@ -188,7 +201,7 @@ export default function ApiWebhooksPage() {
       cell: (h) => (
         <div className="flex justify-end gap-1">
           <Button size="sm" variant="ghost" className="h-6 px-2 text-[11px]" onClick={() => copy(h.url, "Webhook URL")}>
-            <Copy className="size-3" />
+            <Copy className="size-3" weight="bold" />
           </Button>
           <Button size="sm" variant="ghost" className="h-6 px-2 text-[11px]" onClick={() => handleTestWebhook(h.id)}>
             Test
@@ -202,7 +215,7 @@ export default function ApiWebhooksPage() {
             className="h-6 px-2 text-[11px] text-loss"
             onClick={() => handleDeleteWebhook(h.id, h.name)}
           >
-            <Trash2 className="size-3" />
+            <Trash2 className="size-3" weight="bold" />
           </Button>
         </div>
       ),
@@ -222,7 +235,7 @@ export default function ApiWebhooksPage() {
       cell: (k) => (
         <div className="flex justify-end gap-1">
           <Button size="sm" variant="ghost" className="h-6 px-2 text-[11px]" onClick={() => handleRotateApiKey(k.id, k.label)}>
-            <RefreshCw className="size-3" /> Rotate
+            <RefreshCw className="size-3" weight="bold" /> Rotate
           </Button>
           <Button size="sm" variant="ghost" className="h-6 px-2 text-[11px] text-loss" onClick={() => handleRevokeApiKey(k.id, k.label)}>
             Revoke
@@ -244,7 +257,7 @@ export default function ApiWebhooksPage() {
         actions={
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" className="h-7 text-[11px]"><Plus className="size-3" /> New webhook</Button>
+              <Button size="sm" className="h-7 text-[11px]"><Plus className="size-3" weight="bold" /> New webhook</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
@@ -281,10 +294,10 @@ export default function ApiWebhooksPage() {
       />
 
       <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
-        <KpiCard label="Active endpoints" value={`${activeHooks}/${hooks.length}`} icon={<WebhookIcon className="size-3.5" />} />
+        <KpiCard label="Active endpoints" value={`${activeHooks}/${hooks.length}`} icon={<WebhookIcon className="size-3.5" weight="bold" />} />
         <KpiCard label="Signals received (30d)" value={formatNum(totalCalls, 0)} />
         <KpiCard label="Failed deliveries" value={String(failed)} tone={failed > 0 ? "loss" : "profit"} />
-        <KpiCard label="API keys" value={String(apiKeys.length)} icon={<KeyRound className="size-3.5" />} sub="Live scope" />
+        <KpiCard label="API keys" value={String(apiKeys.length)} icon={<KeyRound className="size-3.5" weight="bold" />} sub="Live scope" />
       </div>
 
       <Panel title="Webhook endpoints" subtitle="Each URL maps to one strategy" bodyClassName="p-0" live>
@@ -299,7 +312,7 @@ export default function ApiWebhooksPage() {
         <Panel
           title="Sample payload"
           subtitle="POST JSON body expected by every endpoint"
-          actions={<Button size="sm" variant="ghost" className="h-6 px-2 text-[11px]" onClick={() => copy(SAMPLE_PAYLOAD, "Payload")}><Copy className="size-3" /> Copy</Button>}
+          actions={<Button size="sm" variant="ghost" className="h-6 px-2 text-[11px]" onClick={() => copy(SAMPLE_PAYLOAD, "Payload")}><Copy className="size-3" weight="bold" /> Copy</Button>}
         >
           <pre className="num overflow-auto rounded border border-border bg-surface-2 p-3 text-[11px] leading-relaxed text-muted-foreground">
 {SAMPLE_PAYLOAD}
@@ -341,7 +354,7 @@ export default function ApiWebhooksPage() {
             onClick={handleGenerateApiKey}
             disabled={createApiKeyMutation.isPending}
           >
-            <Plus className="size-3" /> {createApiKeyMutation.isPending ? "Generating..." : "Generate key"}
+            <Plus className="size-3" weight="bold" /> {createApiKeyMutation.isPending ? "Generating..." : "Generate key"}
           </Button>
         }
       >
@@ -352,24 +365,22 @@ export default function ApiWebhooksPage() {
         )}
       </Panel>
 
-      <Panel title="Delivery logs" subtitle="Recent inbound webhook events" bodyClassName="p-0" live>
-        {logsLoading ? (
-          <TableSkeleton rows={3} cols={3} />
-        ) : (
-          <DataTable
-            columns={[
-              { key: "t", header: "Time", cell: (l: any) => <span className="num text-[11px] text-muted-foreground">{formatDateTime(l.timestamp || l.time)}</span> },
-              { key: "lv", header: "Level", cell: (l: any) => <StatusPill status={l.level || l.status} /> },
-              { key: "m", header: "Message", cell: (l: any) => <span className="text-[12px]">{l.message}</span> },
-            ]}
-            rows={logs}
-            rowKey={(l: any) => l.id}
-            maxHeight="20rem"
-            empty="No webhook deliveries yet."
-            dense
-          />
-        )}
-      </Panel>
+      {logsLoading ? (
+        <TableSkeleton rows={3} cols={3} />
+      ) : (
+        <DataTable
+          columns={[
+            { key: "t", header: "Time", cell: (l: any) => <span className="num text-[11px] text-muted-foreground">{formatDateTime(l.timestamp || l.time)}</span> },
+            { key: "lv", header: "Level", cell: (l: any) => <StatusPill status={l.level || l.status} /> },
+            { key: "m", header: "Message", cell: (l: any) => <span className="text-[12px]">{l.message}</span> },
+          ]}
+          rows={logs}
+          rowKey={(l: any) => l.id}
+          maxHeight="20rem"
+          empty="No webhook deliveries yet."
+          dense
+        />
+      )}
     </div>
   );
 }

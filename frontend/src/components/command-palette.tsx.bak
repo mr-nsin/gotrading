@@ -1,0 +1,108 @@
+"use client";
+
+import {
+ useEffect, useState } from "react";
+import {
+ useRouter } from "next/navigation";
+import {
+
+  ChartLineUp as Activity, ChartBar as BarChart3, Bell, Cube as Blocks, Briefcase, FileText, Flask, SquaresFour as LayoutDashboard, ListBullets as ListOrdered, WarningCircle as ShieldAlert, User, WebhookIcon, Wallet,  } from "@phosphor-icons/react";
+
+import {
+
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from "@/components/ui/command";
+import {
+ useStrategies, useBrokers } from "@/hooks/use-api";
+
+const navItems = [
+  { label: "Dashboard", to: "/", icon: LayoutDashboard },
+  { label: "Strategies", to: "/strategies", icon: Blocks },
+  { label: "New Strategy", to: "/strategies/new", icon: Blocks },
+  { label: "Positions", to: "/positions", icon: Activity },
+  { label: "Orderbook", to: "/orders", icon: ListOrdered },
+  { label: "Portfolio", to: "/portfolio", icon: Wallet },
+  { label: "Brokers", to: "/brokers", icon: Briefcase },
+  { label: "Backtesting", to: "/backtesting", icon: Flask },
+  { label: "Reports", to: "/reports", icon: BarChart3 },
+  { label: "Logs", to: "/logs", icon: FileText },
+  { label: "Notifications", to: "/notifications", icon: Bell },
+  { label: "API & Webhooks", to: "/api-webhooks", icon: WebhookIcon },
+  { label: "Risk Settings", to: "/risk", icon: ShieldAlert },
+  { label: "Profile", to: "/profile", icon: User },
+] as const;
+
+export function CommandPalette() {
+  const [open, setOpen] = useState(false);
+  const router = useRouter();
+  
+  const { data: strategiesData } = useStrategies();
+  const { data: brokersData } = useBrokers();
+
+  const strategies = strategiesData || [];
+  const brokers = brokersData || [];
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setOpen((v) => !v);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const go = (to: string) => {
+    setOpen(false);
+    router.push(to);
+  };
+
+  return (
+    <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandInput placeholder="Search pages, strategies, brokers…" />
+      <CommandList>
+        <CommandEmpty>No results found.</CommandEmpty>
+        <CommandGroup heading="Navigate">
+          {navItems.map((item) => (
+            <CommandItem key={item.to} value={item.label} onSelect={() => go(item.to)}>
+              <item.icon className="size-4" />
+              <span>{item.label}</span>
+              {item.to === "/" && <CommandShortcut>⌘K</CommandShortcut>}
+            </CommandItem>
+          ))}
+        </CommandGroup>
+        <CommandSeparator />
+        <CommandGroup heading="Strategies">
+          {strategies.slice(0, 8).map((s) => (
+            <CommandItem
+              key={s.id}
+              value={`${s.name} ${s.segment || s.type}`}
+              onSelect={() => go(`/strategies/${s.id}`)}
+            >
+              <Blocks className="size-4" />
+              <span className="truncate">{s.name}</span>
+              <CommandShortcut className="num">{s.segment || s.type}</CommandShortcut>
+            </CommandItem>
+          ))}
+        </CommandGroup>
+        <CommandSeparator />
+        <CommandGroup heading="Brokers">
+          {brokers.map((b) => (
+            <CommandItem key={b.id} value={b.name} onSelect={() => go(`/brokers/${b.id}`)}>
+              <Briefcase className="size-4" />
+              <span className="truncate">{b.name}</span>
+            </CommandItem>
+          ))}
+        </CommandGroup>
+      </CommandList>
+    </CommandDialog>
+  );
+}

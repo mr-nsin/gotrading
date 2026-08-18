@@ -9,12 +9,15 @@ from engine.risk_manager import RiskManager
 logger = logging.getLogger(__name__)
 
 from engine.broker.base import BaseBroker
+from engine.caching.symbol_resolver import SymbolResolver
+
 
 class FyersBroker(BaseBroker):
     """
     Handles live order execution via the Fyers API.
     """
     def __init__(self, user_id=None, broker_id=None):
+        self.resolver = SymbolResolver()
         super().__init__(user_id)
         
         self.client_id = os.getenv("FYERS_CLIENT_ID")
@@ -142,5 +145,147 @@ class FyersBroker(BaseBroker):
                 logger.error(f"[{strategy_name}] Order rejected by Fyers: {error_msg}")
                 return None
         except Exception as e:
-            logger.error(f"[{strategy_name}] Exception during order placement: {e}")
+            logger.error(f"Failed to place real Fyers order: {e}")
             return None
+
+    def get_order_status(self, order_id: str) -> dict:
+        if not self.fyers:
+            return {"order_id": order_id, "status": "mock"}
+        try:
+            response = self.fyers.orderbook()
+            if response and response.get("s") == "ok":
+                for order in response.get("orderBook", []):
+                    if str(order.get("id")) == str(order_id):
+                        return {
+                            "order_id": order_id,
+                            "status": order.get("status"), # 2 means traded, 6 means cancelled, etc. depending on API
+                            "filled_quantity": order.get("filledQty"),
+                            "average_price": order.get("tradedPrice"),
+                            "raw": order
+                        }
+            return {"order_id": order_id, "status": "NOT_FOUND"}
+        except Exception as e:
+            logger.error(f"Error fetching order status: {e}")
+            return {}
+
+    def get_positions(self) -> list:
+        if not self.fyers:
+            return []
+        try:
+            response = self.fyers.positions()
+            if response and response.get("s") == "ok":
+                normalized = []
+                for p in response.get("netPositions", []):
+                    normalized.append({
+                        "symbol": p.get("symbol"),
+                        "quantity": p.get("netQty"),
+                        "average_price": p.get("avgPrice"),
+                        "pnl": p.get("pl"),
+                        "product_type": p.get("productType"),
+                        "raw": p
+                    })
+                return normalized
+            return []
+        except Exception as e:
+            logger.error(f"Error fetching positions: {e}")
+            return []
+
+    def get_margins(self) -> dict:
+        if not self.fyers:
+            return {"available": 0.0, "used": 0.0}
+        try:
+            response = self.fyers.funds()
+            if response and response.get("s") == "ok":
+                funds = response.get("fund_limit", [])
+                # Depending on fyers response structure for funds
+                # For now just stubbing parse logic
+                available = 0.0
+                used = 0.0
+                for item in funds:
+                    if item.get("title") == "Available Balance":
+                        available = float(item.get("equityAmount", 0))
+                    elif item.get("title") == "Utilized Amount":
+                        used = float(item.get("equityAmount", 0))
+                return {
+                    "available": available,
+                    "used": used,
+                    "raw": response
+                }
+            return {"available": 0.0, "used": 0.0}
+        except Exception as e:
+            logger.error(f"Error fetching margins: {e}")
+            return {"available": 0.0, "used": 0.0}
+
+    def get_instrument_list(self) -> list:
+        # Fyers provides CSV links per exchange:
+        # https://public.fyers.in/sym_details/NSE_CM.csv
+        # https://public.fyers.in/sym_details/NSE_FO.csv
+        import requests
+        if not self.fyers:
+            return []
+        try:
+            url = "https://public.fyers.in/sym_details/NSE_CM.csv"
+            response = requests.get(url, timeout=10)
+            if response.status_code == 200:
+                logger.info("Successfully fetched NSE_CM symbols from Fyers")
+                # Need CSV parsing, but returning raw text or mock list for now as stub
+                return [{"raw_csv": True}]
+            return []
+        except Exception as e:
+            logger.error(f"Error fetching instrument list: {e}")
+            return []
+
+    def get_historical_data(self, symbol: str, from_date: str, to_date: str, resolution: str, exchange: str = "NSE") -> list:
+        token = self.resolver.resolve_token(symbol, self.__class__.__name__.replace("Broker", ""), exchange)
+        if not token or not self.fyers:
+            logger.error(f"Could not resolve token for {symbol}")
+            return []
+        try:
+            data = {"symbol": token, "resolution": resolution, "date_format": "1", "range_from": from_date, "range_to": to_date, "cont_flag": "1"}
+            res = self.fyers.history(data=data)
+            return res.get('candles', []) if res else []
+        except Exception as e:
+            logger.error(f"Fyers historical data error: {e}")
+            return []
+
+    def get_market_depth(self, symbol: str, exchange: str = "NSE") -> dict:
+        token = self.resolver.resolve_token(symbol, self.__class__.__name__.replace("Broker", ""), exchange)
+        if not token or not self.fyers:
+            logger.error(f"Could not resolve token for {symbol}")
+            return {}
+        try:
+            data = {"symbols": token}
+            res = self.fyers.depth(data=data)
+            return res.get('d', {}).get(token, {}) if res else {}
+        except Exception as e:
+            logger.error(f"Fyers market depth error: {e}")
+            return {}
+
+    def get_option_chain(self, underlying_symbol: str, expiry_date: str) -> dict:
+        from sqlmodel import select
+        from models import Instrument
+        try:
+            with Session(engine) as session:
+                instruments = session.exec(
+                    select(Instrument)
+                    .where(Instrument.symbol.startswith(underlying_symbol))
+                    .where(Instrument.segment == "OPT")
+                ).all()
+
+                chain = {"calls": [], "puts": []}
+                for inst in instruments:
+                    item = {
+                        "symbol": inst.symbol,
+                        "strike": inst.strike,
+                        "token": inst.fyers_token,
+                        "ltp": inst.ltp
+                    }
+                    if inst.option_type == "CE":
+                        chain["calls"].append(item)
+                    elif inst.option_type == "PE":
+                        chain["puts"].append(item)
+
+                return chain
+        except Exception as e:
+            logger.error(f"Error building Fyers option chain: {e}")
+            return {"calls": [], "puts": []}

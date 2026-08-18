@@ -1,6 +1,7 @@
 "use client";
 
 import {
+
   Area,
   AreaChart,
   Bar,
@@ -19,7 +20,8 @@ import {
   YAxis,
 } from "recharts";
 
-import { useSettings } from "@/components/settings-provider";
+import {
+ useSettings } from "@/components/settings-provider";
 
 const axis = {
   stroke: "var(--muted-foreground)",

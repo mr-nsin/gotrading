@@ -1,6 +1,7 @@
 import type { Strategy } from "@/lib/api";
 
-import { createRuleId } from "./constants";
+import {
+ createRuleId } from "./constants";
 import type { StrategyFormValues } from "./schema";
 
 function parseInstruments(raw?: string | string[]): string[] {

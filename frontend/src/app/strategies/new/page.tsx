@@ -1,11 +1,15 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
+import {
+ ArrowLeft } from "@phosphor-icons/react";
 import Link from "next/link";
 
-import { StrategyBuilder } from "@/components/strategy-builder";
-import { PageHeader } from "@/components/ui-kit";
-import { Button } from "@/components/ui/button";
+import {
+ StrategyBuilder } from "@/components/strategy-builder";
+import {
+ PageHeader } from "@/components/ui-kit";
+import {
+ Button } from "@/components/ui/button";
 
 export default function NewStrategyPage() {
   return (
@@ -16,7 +20,7 @@ export default function NewStrategyPage() {
         actions={
           <Button variant="ghost" size="sm" asChild>
             <Link href="/strategies">
-              <ArrowLeft className="mr-2 size-4" />
+              <ArrowLeft className="mr-2 size-4" weight="bold" />
               Back
             </Link>
           </Button>

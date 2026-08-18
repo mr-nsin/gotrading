@@ -121,7 +121,8 @@ class ConnectionManager:
                                 ],
                                 "recent_logs": recent_logs
                             }
-                    except Exception:
+                    except Exception as e:
+                        logger.error(f"Error fetching snapshot for websocket: {e}")
                         return None
 
                 payload = await asyncio.to_thread(fetch_snapshot)

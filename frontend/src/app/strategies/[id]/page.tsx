@@ -1,28 +1,43 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { Play, Pause, Square, ArrowLeft } from "lucide-react";
-import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
-
-import { PageHeader, StatusPill, Tag } from "@/components/ui-kit";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
+ useParams } from "next/navigation";
+import {
+ Play, Pause, Square, ArrowLeft } from "@phosphor-icons/react";
+import {
+ toast } from "sonner";
+import {
+ useQueryClient } from "@tanstack/react-query";
+
+import {
+ PageHeader, StatusPill, Tag } from "@/components/ui-kit";
+import {
+ Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+ Button } from "@/components/ui/button";
+import {
+ Skeleton } from "@/components/ui/skeleton";
+import {
+
   useStrategy,
   useStartStrategy,
   usePauseStrategy,
   useStopStrategy,
   useBrokers,
 } from "@/hooks/use-api";
-import { StrategyOverviewTab } from "@/components/strategy-detail/strategy-overview-tab";
-import { StrategyPositionsTab } from "@/components/strategy-detail/strategy-positions-tab";
-import { StrategyOrdersTab } from "@/components/strategy-detail/strategy-orders-tab";
-import { StrategyPnlTab } from "@/components/strategy-detail/strategy-pnl-tab";
-import { StrategyConfigTab } from "@/components/strategy-detail/strategy-config-tab";
-import { StrategyLogsTab } from "@/components/strategy-detail/strategy-logs-tab";
+import {
+ StrategyOverviewTab } from "@/components/strategy-detail/strategy-overview-tab";
+import {
+ StrategyPositionsTab } from "@/components/strategy-detail/strategy-positions-tab";
+import {
+ StrategyOrdersTab } from "@/components/strategy-detail/strategy-orders-tab";
+import {
+ StrategyPnlTab } from "@/components/strategy-detail/strategy-pnl-tab";
+import {
+ StrategyConfigTab } from "@/components/strategy-detail/strategy-config-tab";
+import {
+ StrategyLogsTab } from "@/components/strategy-detail/strategy-logs-tab";
 
 const TAB_ITEMS = [
   { value: "overview", label: "Overview" },
@@ -99,18 +114,18 @@ export default function StrategyDetailPage() {
     <>
       {(status === "stopped") && (
         <Button size="sm" variant="outline" className="h-7 text-xs" onClick={handleStart} disabled={startMutation.isPending}>
-          <Play className="mr-1.5 size-3.5 text-profit" />
+          <Play className="mr-1.5 size-3.5 text-profit" weight="fill" />
           Start
         </Button>
       )}
       {status === "running" && (
         <>
           <Button size="sm" variant="outline" className="h-7 text-xs" onClick={handlePause} disabled={pauseMutation.isPending}>
-            <Pause className="mr-1.5 size-3.5 text-warn" />
+            <Pause className="mr-1.5 size-3.5 text-warn" weight="fill" />
             Pause
           </Button>
           <Button size="sm" variant="outline" className="h-7 text-xs" onClick={handleStop} disabled={stopMutation.isPending}>
-            <Square className="mr-1.5 size-3.5 text-loss" />
+            <Square className="mr-1.5 size-3.5 text-loss" weight="fill" />
             Stop
           </Button>
         </>
@@ -118,11 +133,11 @@ export default function StrategyDetailPage() {
       {status === "paused" && (
         <>
           <Button size="sm" variant="outline" className="h-7 text-xs" onClick={handleStart} disabled={startMutation.isPending}>
-            <Play className="mr-1.5 size-3.5 text-profit" />
+            <Play className="mr-1.5 size-3.5 text-profit" weight="fill" />
             Start
           </Button>
           <Button size="sm" variant="outline" className="h-7 text-xs" onClick={handleStop} disabled={stopMutation.isPending}>
-            <Square className="mr-1.5 size-3.5 text-loss" />
+            <Square className="mr-1.5 size-3.5 text-loss" weight="fill" />
             Stop
           </Button>
         </>
@@ -147,7 +162,7 @@ export default function StrategyDetailPage() {
         <PageHeader title="Strategy not found" description="The requested strategy could not be loaded." />
         <Button asChild variant="outline" size="sm">
           <Link href="/strategies">
-            <ArrowLeft className="mr-2 size-4" />
+            <ArrowLeft className="mr-2 size-4" weight="bold" />
             Back to list
           </Link>
         </Button>
@@ -170,7 +185,7 @@ export default function StrategyDetailPage() {
             {actionButtons}
             <Button asChild variant="outline" size="sm" className="h-7 text-xs">
               <Link href="/strategies">
-                <ArrowLeft className="mr-1.5 size-3.5" />
+                <ArrowLeft className="mr-1.5 size-3.5" weight="bold" />
                 Back
               </Link>
             </Button>

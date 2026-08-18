@@ -1,21 +1,36 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Download, Play, RotateCcw } from "lucide-react";
-import { toast } from "sonner";
-
-import { KpiCard, PageHeader, Panel, StatusPill, Tag, TableSkeleton } from "@/components/ui-kit";
-import { DataTable, type Column } from "@/components/data-table";
-import { EquityChart, PnlBarChart } from "@/components/charts";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useSettings } from "@/components/settings-provider";
-import { formatDateTime, formatNum, formatPct, pnlClass } from "@/lib/format";
 import {
+ useMemo, useState } from "react";
+import {
+ Download, Play, ArrowCounterClockwise as RotateCcw } from "@phosphor-icons/react";
+import {
+ toast } from "sonner";
+
+import {
+ KpiCard, PageHeader, Panel, StatusPill, Tag, TableSkeleton } from "@/components/ui-kit";
+import {
+ DataTable, type Column } from "@/components/data-table";
+import {
+ EquityChart, PnlBarChart } from "@/components/charts";
+import {
+ Button } from "@/components/ui/button";
+import {
+ Input } from "@/components/ui/input";
+import {
+ Label } from "@/components/ui/label";
+import {
+ Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+ Switch } from "@/components/ui/switch";
+import {
+ Skeleton } from "@/components/ui/skeleton";
+import {
+ useSettings } from "@/components/settings-provider";
+import {
+ formatDateTime, formatNum, formatPct, pnlClass } from "@/lib/format";
+import {
+
   useBacktestRuns,
   useBacktestStrategies,
   useRunBacktest,
@@ -111,7 +126,7 @@ export default function BacktestingPage() {
       align: "right",
       cell: (r) => (
         <Button size="sm" variant="ghost" className="h-6 px-2 text-[11px]" onClick={() => toast.info(`Report ${r.id.slice(0, 8)} exported to CSV`)}>
-          <Download className="size-3" /> CSV
+          <Download className="size-3" weight="bold" /> CSV
         </Button>
       ),
     },
@@ -124,7 +139,7 @@ export default function BacktestingPage() {
         description="Simulate any strategy over historical data with realistic slippage and cost assumptions."
         actions={
           <Button size="sm" variant="outline" className="h-7 text-[11px]" onClick={() => { setResult(null); toast.info("Parameters reset"); }}>
-            <RotateCcw className="size-3" /> Reset
+            <RotateCcw className="size-3" weight="bold" /> Reset
           </Button>
         }
       />
@@ -173,7 +188,7 @@ export default function BacktestingPage() {
               <Switch checked={includeCosts} onCheckedChange={setIncludeCosts} />
             </div>
             <Button className="h-8 w-full text-[12px]" onClick={run} disabled={runBacktestMutation.isPending}>
-              <Play className="size-3.5" /> {runBacktestMutation.isPending ? "Running simulation…" : "Run backtest"}
+              <Play className="size-3.5" weight="fill" /> {runBacktestMutation.isPending ? "Running simulation…" : "Run backtest"}
             </Button>
             {strategy && (
               <div className="flex flex-wrap gap-1 pt-1">

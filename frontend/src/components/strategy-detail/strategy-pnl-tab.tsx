@@ -1,6 +1,7 @@
 "use client";
 
-import { Panel, EmptyState } from "@/components/ui-kit";
+import {
+ Panel, EmptyState } from "@/components/ui-kit";
 
 interface StrategyPnlTabProps {
   strategyId: string;

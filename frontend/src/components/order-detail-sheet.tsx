@@ -1,20 +1,28 @@
 "use client";
 
-import { Copy } from "lucide-react";
-import { toast } from "sonner";
-
-import { SideTag, StatusPill } from "@/components/ui-kit";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
+ Copy as Copy } from "@phosphor-icons/react";
+import {
+ toast } from "sonner";
+
+import {
+ SideTag, StatusPill } from "@/components/ui-kit";
+import {
+ Alert, AlertDescription } from "@/components/ui/alert";
+import {
+
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { OrderTimeline } from "@/components/order-timeline";
-import { formatDateTime, formatNum } from "@/lib/format";
+import {
+ Button } from "@/components/ui/button";
+import {
+ OrderTimeline } from "@/components/order-timeline";
+import {
+ formatDateTime, formatNum } from "@/lib/format";
 import type { Order } from "@/lib/api";
 
 interface OrderDetailSheetProps {
@@ -46,7 +54,7 @@ export function OrderDetailSheet({ order, open, onOpenChange }: OrderDetailSheet
                   onClick={copyId}
                   aria-label="Copy order ID"
                 >
-                  <Copy className="size-3" />
+                  <Copy className="size-3" weight="bold" />
                 </Button>
                 <span className="text-muted-foreground">·</span>
                 <span className="num">

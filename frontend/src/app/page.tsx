@@ -1,27 +1,28 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import {
+ useMemo, useState } from "react";
 import Link from "next/link";
 import {
-  Activity,
-  Boxes,
-  IndianRupee,
-  Layers,
-  PiggyBank,
-  Target,
-  TrendingDown,
-  TrendingUp,
-  Wallet,
-} from "lucide-react";
 
-import { KpiCard, PageHeader, Panel, Sparkline, StatusPill, Tag, SideTag, TableSkeleton } from "@/components/ui-kit";
-import { DataTable, type Column } from "@/components/data-table";
-import { DonutChart, EquityChart, PnlBarChart } from "@/components/charts";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useSettings } from "@/components/settings-provider";
-import { formatNum, formatPct, formatTime, pnlClass } from "@/lib/format";
+  ChartLineUp as Activity, Cube as Boxes, CurrencyInr as IndianRupee, Stack as Layers, PiggyBank, Target, TrendDown as TrendingDown, TrendUp as TrendingUp, Wallet,  } from "@phosphor-icons/react";
+
 import {
+ KpiCard, PageHeader, Panel, Sparkline, StatusPill, Tag, SideTag, TableSkeleton } from "@/components/ui-kit";
+import {
+ DataTable, type Column } from "@/components/data-table";
+import {
+ DonutChart, EquityChart, PnlBarChart } from "@/components/charts";
+import {
+ Button } from "@/components/ui/button";
+import {
+ Skeleton } from "@/components/ui/skeleton";
+import {
+ useSettings } from "@/components/settings-provider";
+import {
+ formatNum, formatPct, formatTime, pnlClass } from "@/lib/format";
+import {
+
   useDashboardTotals,
   useEquityCurve,
   useIntradayCurve,
@@ -33,6 +34,7 @@ import {
   useAllocation,
   useTopMovers,
 } from "@/hooks/use-api";
+import { useTabLoadTime } from "@/hooks/use-tab-load-time";
 import type { Strategy, Broker, Order, Position } from "@/lib/api";
 
 const RANGES = ["1D", "1W", "1M", "3M", "1Y", "All"] as const;
@@ -52,6 +54,8 @@ export default function Dashboard() {
   const { data: pnlByStrategyData } = usePnlByStrategy();
   const { data: allocationData } = useAllocation();
   const { data: topMoversData } = useTopMovers();
+
+  useTabLoadTime("Dashboard", totalsLoading || curveLoading || strategiesLoading || ordersLoading || brokersLoading);
 
   const curve = useMemo(() => {
     if (range === "1D" && intradayData) return intradayData;
@@ -300,15 +304,15 @@ export default function Dashboard() {
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-        <KpiCard label="Portfolio Value" value={money(t.portfolioValue, { decimals: 0 })} icon={<Wallet className="size-4" />} />
-        <KpiCard label="Capital Deployed" value={money(t.deployed, { decimals: 0 })} sub={`${((t.deployed / t.funds) * 100).toFixed(1)}% of funds`} icon={<Layers className="size-4" />} />
-        <KpiCard label="Today's P&L" value={money(t.todayPnl, { sign: true, decimals: 0 })} tone={t.todayPnl >= 0 ? "profit" : "loss"} delta={t.todayPnlPct} icon={<TrendingUp className="size-4" />} />
-        <KpiCard label="Overall P&L" value={money(t.overallPnl, { sign: true, decimals: 0 })} tone={t.overallPnl >= 0 ? "profit" : "loss"} delta={t.overallPnlPct} icon={<IndianRupee className="size-4" />} />
-        <KpiCard label="Active Strategies" value={`${t.activeStrategies}`} sub={`of ${t.totalStrategies} configured`} icon={<Boxes className="size-4" />} />
-        <KpiCard label="Open Positions" value={`${t.openPositions}`} sub={`across ${brokers.length} brokers`} icon={<Activity className="size-4" />} />
-        <KpiCard label="Win Rate" value={`${t.winRate.toFixed(1)}%`} tone="profit" sub="last 30 sessions" icon={<Target className="size-4" />} />
-        <KpiCard label="Max Drawdown" value={`${t.maxDrawdown.toFixed(1)}%`} tone="loss" sub="peak-to-trough" icon={<TrendingDown className="size-4" />} />
-        <KpiCard label="Available Margin" value={money(t.marginAvailable, { decimals: 0 })} sub="aggregated" icon={<PiggyBank className="size-4" />} />
+        <KpiCard label="Portfolio Value" value={money(t.portfolioValue, { decimals: 0 })} icon={<Wallet className="size-5 text-blue-400" weight="duotone" />} />
+        <KpiCard label="Capital Deployed" value={money(t.deployed, { decimals: 0 })} sub={`${((t.deployed / t.funds) * 100).toFixed(1)}% of funds`} icon={<Layers className="size-5 text-indigo-400" weight="duotone" />} />
+        <KpiCard label="Today's P&L" value={money(t.todayPnl, { sign: true, decimals: 0 })} tone={t.todayPnl >= 0 ? "profit" : "loss"} delta={t.todayPnlPct} icon={<TrendingUp className="size-5 text-emerald-400" weight="duotone" />} />
+        <KpiCard label="Overall P&L" value={money(t.overallPnl, { sign: true, decimals: 0 })} tone={t.overallPnl >= 0 ? "profit" : "loss"} delta={t.overallPnlPct} icon={<IndianRupee className="size-5 text-emerald-500" weight="duotone" />} />
+        <KpiCard label="Active Strategies" value={`${t.activeStrategies}`} sub={`of ${t.totalStrategies} configured`} icon={<Boxes className="size-5 text-purple-400" weight="duotone" />} />
+        <KpiCard label="Open Positions" value={`${t.openPositions}`} sub={`across ${brokers.length} brokers`} icon={<Activity className="size-5 text-cyan-400" weight="duotone" />} />
+        <KpiCard label="Win Rate" value={`${t.winRate.toFixed(1)}%`} tone="profit" sub="last 30 sessions" icon={<Target className="size-5 text-green-400" weight="duotone" />} />
+        <KpiCard label="Max Drawdown" value={`${t.maxDrawdown.toFixed(1)}%`} tone="loss" sub="peak-to-trough" icon={<TrendingDown className="size-5 text-rose-400" weight="duotone" />} />
+        <KpiCard label="Available Margin" value={money(t.marginAvailable, { decimals: 0 })} sub="aggregated" icon={<PiggyBank className="size-5 text-amber-400" weight="duotone" />} />
       </div>
 
       <div className="grid gap-6 xl:grid-cols-3">

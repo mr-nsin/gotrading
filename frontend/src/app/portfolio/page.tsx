@@ -1,15 +1,25 @@
 "use client";
 
-import { useMemo, useState } from "react";
-
-import { EmptyState, KpiCard, PageHeader, Panel, StatusPill, Tag, TableSkeleton } from "@/components/ui-kit";
-import { DataTable, type Column } from "@/components/data-table";
-import { DonutChart, EquityChart, PnlBarChart } from "@/components/charts";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useSettings } from "@/components/settings-provider";
-import { formatNum, formatPct, pnlClass } from "@/lib/format";
 import {
+ useMemo, useState } from "react";
+import { Wallet, Vault, CurrencyInr, Bank, RocketLaunch, Stack } from "@phosphor-icons/react";
+
+import {
+ EmptyState, KpiCard, PageHeader, Panel, StatusPill, Tag, TableSkeleton } from "@/components/ui-kit";
+import {
+ DataTable, type Column } from "@/components/data-table";
+import {
+ DonutChart, EquityChart, PnlBarChart } from "@/components/charts";
+import {
+ Button } from "@/components/ui/button";
+import {
+ Skeleton } from "@/components/ui/skeleton";
+import {
+ useSettings } from "@/components/settings-provider";
+import {
+ formatNum, formatPct, pnlClass } from "@/lib/format";
+import {
+
   useHoldings,
   usePortfolioSummary,
   useSectorAllocation,
@@ -21,6 +31,7 @@ import {
   useDashboardTotals,
 } from "@/hooks/use-api";
 import type { Holding } from "@/lib/api";
+import { useTabLoadTime } from "@/hooks/use-tab-load-time";
 
 const RANGES = ["1W", "1M", "3M", "1Y"] as const;
 
@@ -46,6 +57,8 @@ export default function PortfolioPage() {
   const { data: strategiesData } = useStrategies();
   const { data: positionsData } = usePositions();
   const { data: totals } = useDashboardTotals();
+
+  useTabLoadTime("Portfolio", holdingsLoading || curveLoading || brokersLoading);
 
   const holdingsList = holdings || [];
   const brokers = brokersData || [];
@@ -152,21 +165,23 @@ export default function PortfolioPage() {
       />
 
       <div className="grid grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-6">
-        <KpiCard label="Net worth" value={money(netWorth, { decimals: 0 })} sub="Cash + holdings" />
-        <KpiCard label="Holdings value" value={money(holdingsValue, { decimals: 0 })} sub={`Invested ${money(invested, { decimals: 0 })}`} />
+        <KpiCard label="Net worth" value={money(netWorth, { decimals: 0 })} sub="Cash + holdings" icon={<Wallet className="size-5 text-blue-400" weight="duotone" />} />
+        <KpiCard label="Holdings value" value={money(holdingsValue, { decimals: 0 })} sub={`Invested ${money(invested, { decimals: 0 })}`} icon={<Vault className="size-5 text-indigo-400" weight="duotone" />} />
         <KpiCard
           label="Holdings P&L"
           value={money(holdingsPnl, { decimals: 0, sign: true })}
           tone={holdingsPnl >= 0 ? "profit" : "loss"}
           delta={(holdingsPnl / Math.max(1, invested)) * 100}
+          icon={<CurrencyInr className="size-5 text-emerald-400" weight="duotone" />}
         />
-        <KpiCard label="Free cash" value={money(totals?.marginAvailable || 0, { decimals: 0 })} sub="Across brokers" />
-        <KpiCard label="Deployed capital" value={money(totals?.deployed || 0, { decimals: 0 })} sub={`${totals?.activeStrategies || 0} live strategies`} />
+        <KpiCard label="Free cash" value={money(totals?.marginAvailable || 0, { decimals: 0 })} sub="Across brokers" icon={<Bank className="size-5 text-emerald-400" weight="duotone" />} />
+        <KpiCard label="Deployed capital" value={money(totals?.deployed || 0, { decimals: 0 })} sub={`${totals?.activeStrategies || 0} live strategies`} icon={<RocketLaunch className="size-5 text-amber-400" weight="duotone" />} />
         <KpiCard
           label="Open exposure"
           value={money(openExposure, { decimals: 0 })}
           sub={`${positions.length} open positions`}
           tone="warn"
+          icon={<Stack className="size-5 text-rose-400" weight="duotone" />}
         />
       </div>
 

@@ -1,0 +1,52 @@
+@@ -43,26 +45,28 @@
+         if now - self._cache_time < CACHE_TTL_SECONDS and self._cache:
+             return True
+         
+-        try:
+-            with Session(engine) as session:
+-                settings = session.get(RiskSettings, 1)
+-                if not settings:
+-                    settings = RiskSettings(id=1)
+-                
+-                portfolio = session.get(VirtualPortfolio, 1)
+-                open_trades = session.exec(
+-                    select(VirtualTrade).where(VirtualTrade.status == "OPEN")
+-                ).all()
+-                
+-                self._cache = {
+-                    'settings': settings,
+-                    'portfolio': portfolio,
+-                    'open_trades': open_trades,
+-                    'open_trade_count': len(open_trades),
+-                    'unrealized_pnl': sum(t.pnl or 0.0 for t in open_trades),
+-                }
+-                self._cache_time = now
+-                return True
+-        except Exception as e:
+-            logger.error(f"Failed to refresh risk cache: {e}")
+-            return False
++        # P0 FIX: Add thread safety lock around cache refresh because process_tick runs in threadpool
++        with self._cache_lock:
++            try:
++                with Session(engine) as session:
++                    settings = session.get(RiskSettings, 1)
++                    if not settings:
++                        settings = RiskSettings(id=1)
++                    
++                    portfolio = session.get(VirtualPortfolio, 1)
++                    open_trades = session.exec(
++                        select(VirtualTrade).where(VirtualTrade.status == "OPEN")
++                    ).all()
++                    
++                    self._cache = {
++                        'settings': settings,
++                        'portfolio': portfolio,
++                        'open_trades': open_trades,
++                        'open_trade_count': len(open_trades),
++                        'unrealized_pnl': sum(t.pnl or 0.0 for t in open_trades),
++                    }
++                    self._cache_time = time.time()
++                    return True
++            except Exception as e:
++                logger.error(f"Failed to refresh risk cache: {e}")
++                return False

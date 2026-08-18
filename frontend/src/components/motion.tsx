@@ -1,9 +1,12 @@
 "use client";
 
-import { type ReactNode } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import {
+ type ReactNode } from "react";
+import {
+ AnimatePresence, motion, useReducedMotion } from "motion/react";
 
-import { cn } from "@/lib/utils";
+import {
+ cn } from "@/lib/utils";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 

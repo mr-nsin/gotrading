@@ -1,14 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import { Shield, ShieldOff } from "lucide-react";
-import { toast } from "sonner";
-
-import { StatusPill } from "@/components/ui-kit";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
+ useState } from "react";
+import {
+ Shield, ShieldSlash as ShieldOff } from "@phosphor-icons/react";
+import {
+ toast } from "sonner";
+
+import {
+ StatusPill } from "@/components/ui-kit";
+import {
+ Button } from "@/components/ui/button";
+import {
+ Input } from "@/components/ui/input";
+import {
+ Label } from "@/components/ui/label";
+import {
+
   useDisable2FA,
   useProfile,
   useSetup2FA,
@@ -73,9 +81,9 @@ export function TwoFactorSetup() {
       <div className="flex items-center justify-between rounded border border-border bg-surface-2 px-3 py-2.5">
         <div className="flex items-center gap-3">
           {enabled ? (
-            <Shield className="size-5 text-profit" />
+            <Shield className="size-5 text-profit" weight="duotone" />
           ) : (
-            <ShieldOff className="size-5 text-muted-foreground" />
+            <ShieldOff className="size-5 text-muted-foreground" weight="duotone" />
           )}
           <div>
             <div className="text-sm font-medium">Two-factor authentication</div>

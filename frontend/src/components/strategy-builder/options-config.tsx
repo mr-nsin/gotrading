@@ -1,12 +1,17 @@
 "use client";
 
-import { useFormContext } from "react-hook-form";
+import {
+ useFormContext } from "react-hook-form";
 
-import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+ FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import {
+ Input } from "@/components/ui/input";
+import {
+ Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import { EXPIRY_OPTIONS, OPTION_TYPES, STRIKE_SELECTIONS } from "./constants";
+import {
+ EXPIRY_OPTIONS, OPTION_TYPES, STRIKE_SELECTIONS } from "./constants";
 import type { StrategyFormValues } from "./schema";
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {

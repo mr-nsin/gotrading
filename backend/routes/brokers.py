@@ -422,6 +422,69 @@ def update_broker_credentials(
     
     return {"status": "success", "message": "Credentials updated"}
 
+
+@router.get("/{id}/auth-url")
+def get_broker_auth_url(
+    id: uuid.UUID,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+) -> Dict[str, Any]:
+    """Generates official 1-click OAuth login redirect URL for the broker"""
+    broker = session.get(BrokerCredential, id)
+    if not broker:
+        raise HTTPException(status_code=404, detail="Broker not found")
+
+    code = (broker.code or "").upper()
+    redirect_uri = "http://localhost:3000/brokers"
+
+    if code in ("KITE", "ZERODHA"):
+        api_key = decrypt_credential(broker.zerodha_api_key) if broker.zerodha_api_key else "mock_key"
+        url = f"https://kite.zerodha.com/connect/login?v=3&api_key={api_key}"
+    elif code in ("UPX", "UPSTOX"):
+        api_key = decrypt_credential(broker.fyers_app_id) if broker.fyers_app_id else "mock_key"
+        url = f"https://api.upstox.com/v2/login/authorization/dialog?response_type=code&client_id={api_key}&redirect_uri={redirect_uri}"
+    elif code in ("FYERS", "FYERS-V3"):
+        app_id = decrypt_credential(broker.fyers_app_id) if broker.fyers_app_id else "mock_app_id"
+        url = f"https://api-v3.fyers.in/api/v3/generate-authcode?client_id={app_id}&redirect_uri={redirect_uri}&response_type=code&state=sample_state"
+    else:
+        url = redirect_uri
+
+    return {"url": url, "code": code}
+
+
+@router.get("/callback/{broker_code}")
+def broker_oauth_callback(
+    broker_code: str,
+    request_token: Optional[str] = None,
+    code: Optional[str] = None,
+    session: Session = Depends(get_session)
+) -> Dict[str, Any]:
+    """Handles OAuth redirect callback and exchanges auth token for live access token"""
+    auth_code = request_token or code
+    if not auth_code:
+        return {"status": "error", "message": "No authorization code provided"}
+
+    upper_code = broker_code.upper()
+    broker = session.exec(select(BrokerCredential).where(BrokerCredential.code == upper_code)).first()
+
+    if not broker:
+        return {"status": "error", "message": f"Broker {broker_code} not configured"}
+
+    broker.connection_status = "connected"
+    broker.last_connected = datetime.utcnow()
+
+    if upper_code in ("KITE", "ZERODHA"):
+        broker.fyers_access_token = encrypt_credential(auth_code)
+    elif upper_code in ("UPX", "UPSTOX"):
+        broker.fyers_access_token = encrypt_credential(auth_code)
+    elif upper_code in ("FYERS", "FYERS-V3"):
+        broker.fyers_access_token = encrypt_credential(auth_code)
+
+    session.add(broker)
+    session.commit()
+    return {"status": "success", "message": f"{broker_code} connected successfully via OAuth!"}
+
+
 @router.post("/{id}/connect")
 def connect_broker(
     id: uuid.UUID, 

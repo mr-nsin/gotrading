@@ -185,6 +185,28 @@ def create_db_and_tables():
                     except Exception as e:
                         print(f"Migration notice for notificationsettings.{col_name}: {e}")
 
+        # Check instrument table for new caching columns
+        if inspector.has_table("instrument"):
+            columns = [c["name"] for c in inspector.get_columns("instrument")]
+            add_cols = [
+                ("exchange", "VARCHAR"),
+                ("angelone_token", "VARCHAR"),
+                ("zerodha_token", "VARCHAR"),
+                ("dhan_token", "VARCHAR"),
+                ("fyers_token", "VARCHAR"),
+                ("upstox_token", "VARCHAR"),
+                ("aliceblue_token", "VARCHAR"),
+                ("fivepaisa_token", "VARCHAR"),
+                ("kotakneo_token", "VARCHAR"),
+            ]
+            for col_name, col_type in add_cols:
+                if col_name not in columns:
+                    try:
+                        conn.execute(text(f"ALTER TABLE instrument ADD COLUMN {col_name} {col_type};"))
+                        conn.commit()
+                    except Exception as e:
+                        print(f"Migration notice for instrument.{col_name}: {e}")
+
 try:
     from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
     from sqlalchemy.orm import sessionmaker

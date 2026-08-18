@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import {
+ createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 type NumberMode = "indian" | "international";
 type Theme = "dark" | "light";

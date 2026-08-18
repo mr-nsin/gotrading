@@ -1,14 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import {
+ useEffect, useState } from "react";
+import {
+ toast } from "sonner";
 
-import { Panel } from "@/components/ui-kit";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { useNotificationSettings, useUpdateNotificationSettings } from "@/hooks/use-api";
+import {
+ Panel } from "@/components/ui-kit";
+import {
+ Button } from "@/components/ui/button";
+import {
+ Input } from "@/components/ui/input";
+import {
+ Label } from "@/components/ui/label";
+import {
+ Switch } from "@/components/ui/switch";
+import {
+ useNotificationSettings, useUpdateNotificationSettings } from "@/hooks/use-api";
 import type { AlertRules } from "@/lib/api";
 
 const DEFAULT_RULES: AlertRules = {

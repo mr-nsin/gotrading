@@ -1,15 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { Plus, RefreshCw, Unplug } from "lucide-react";
-import { toast } from "sonner";
-
-import { KpiCard, PageHeader, StatusPill, Tag } from "@/components/ui-kit";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
+ useState } from "react";
+import Link from "next/link";
+import {
+ Plus, ArrowsClockwise as RefreshCw, Plugs as Unplug, Link as LinkIcon, Bank, LockKey, LockOpen } from "@phosphor-icons/react";
+import {
+ toast } from "sonner";
+
+import {
+ KpiCard, PageHeader, StatusPill, Tag } from "@/components/ui-kit";
+import {
+ Button } from "@/components/ui/button";
+import {
+ Input } from "@/components/ui/input";
+import {
+ Label } from "@/components/ui/label";
+import {
+
   Dialog,
   DialogContent,
   DialogDescription,
@@ -19,6 +27,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
+
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -29,10 +38,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useSettings } from "@/components/settings-provider";
-import { useBrokers, useDashboardTotals, useAddBroker, useTestBroker, useReauthenticateBroker, useDisconnectBroker } from "@/hooks/use-api";
+import {
+ Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+ useSettings } from "@/components/settings-provider";
+import {
+ useBrokers, useDashboardTotals, useAddBroker, useTestBroker, useReauthenticateBroker, useDisconnectBroker } from "@/hooks/use-api";
+import { BROKER_TYPES } from "@/components/add-broker-dialog";
+import { BrokerLogo } from "@/components/broker-logo";
 import type { Broker } from "@/lib/api";
+import { useTabLoadTime } from "@/hooks/use-tab-load-time";
 
 function Stat({ label, value, tone }: { label: string; value: string; tone?: string }) {
   return (
@@ -42,8 +57,6 @@ function Stat({ label, value, tone }: { label: string; value: string; tone?: str
     </div>
   );
 }
-
-import { BrokerLogo } from "@/components/broker-logo";
 
 const BROKER_COLORS: Record<string, string> = {
   zerodha: "#387ED1",
@@ -60,6 +73,9 @@ export default function BrokersPage() {
   const { money } = useSettings();
   const { data: brokers = [], isLoading } = useBrokers();
   const { data: totals } = useDashboardTotals();
+  
+  useTabLoadTime("Brokers", isLoading);
+  
   const addBrokerMutation = useAddBroker();
   const testBrokerMutation = useTestBroker();
   const reauthMutation = useReauthenticateBroker();
@@ -132,7 +148,7 @@ export default function BrokersPage() {
           <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
             <DialogTrigger asChild>
               <Button size="sm" className="h-7 gap-1 text-xs">
-                <Plus className="size-3.5" /> Add broker
+                <Plus className="size-3.5" weight="bold" /> Add broker
               </Button>
             </DialogTrigger>
             <DialogContent>
@@ -162,7 +178,7 @@ export default function BrokersPage() {
                       ].map((b) => (
                         <SelectItem key={b} value={b.toLowerCase().replace(" ", "")}>
                           <div className="flex items-center gap-2">
-                            <BrokerLogo broker={b.toLowerCase().replace(" ", "")} size={16} />
+                            <BrokerLogo name={b} size={16} />
                             <span>{b}</span>
                           </div>
                         </SelectItem>
@@ -218,19 +234,22 @@ export default function BrokersPage() {
           label="Connected"
           value={`${connectedCount} / ${brokers.length}`}
           tone="profit"
+          icon={<LinkIcon className="size-5 text-emerald-400" weight="duotone" />}
         />
-        <KpiCard loading={isLoading} label="Total Funds" value={money(totalFunds, { decimals: 0 })} />
+        <KpiCard loading={isLoading} label="Total Funds" value={money(totalFunds, { decimals: 0 })} icon={<Bank className="size-5 text-blue-400" weight="duotone" />} />
         <KpiCard
           loading={isLoading}
           label="Margin Used"
           value={money(totalUsed, { decimals: 0 })}
           tone="warn"
+          icon={<LockKey className="size-5 text-amber-400" weight="duotone" />}
         />
         <KpiCard
           loading={isLoading}
           label="Margin Available"
           value={money(totalAvailable, { decimals: 0 })}
           tone="profit"
+          icon={<LockOpen className="size-5 text-emerald-500" weight="duotone" />}
         />
       </div>
 
@@ -295,12 +314,12 @@ export default function BrokersPage() {
                   onClick={() => handleReauthenticate(b.id, name)}
                   disabled={reauthMutation.isPending}
                 >
-                  <RefreshCw className="size-3" /> Re-authenticate
+                  <RefreshCw className="size-3" weight="bold" /> Re-authenticate
                 </Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="outline" size="sm" className="h-7 gap-1 text-[11px] text-loss">
-                      <Unplug className="size-3" /> Disconnect
+                      <Unplug className="size-3" weight="bold" /> Disconnect
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>

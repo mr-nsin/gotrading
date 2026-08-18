@@ -1,12 +1,17 @@
 "use client";
 
-import { useFormContext } from "react-hook-form";
+import {
+ useFormContext } from "react-hook-form";
 
-import { Checkbox } from "@/components/ui/checkbox";
-import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import {
+ Checkbox } from "@/components/ui/checkbox";
+import {
+ FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import {
+ Input } from "@/components/ui/input";
 
-import { WEEKDAYS } from "./constants";
+import {
+ WEEKDAYS } from "./constants";
 import type { StrategyFormValues } from "./schema";
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {

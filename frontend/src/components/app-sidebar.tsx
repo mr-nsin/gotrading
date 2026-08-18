@@ -1,33 +1,25 @@
 
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import {
-  Activity,
-  BarChart3,
-  Bell,
-  Boxes,
-  BriefcaseBusiness,
-  ChevronLeft,
-  ChevronRight,
-  FlaskConical,
-  Gauge,
-  LayoutDashboard,
-  ListOrdered,
-  ScrollText,
-  ShieldAlert,
-  Terminal,
-  User,
-  Webhook,
-} from "lucide-react";
+ useState } from "react";
+import Link from "next/link";
+import {
+ usePathname } from "next/navigation";
+import {
 
-import { cn } from "@/lib/utils";
-import { useDashboardTotals } from "@/hooks/use-api";
-import { useSettings } from "@/components/settings-provider";
-import { money, pnlClass } from "@/lib/format";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+  ChartLineUp as Activity, ChartBar as BarChart3, Bell, Cube as Boxes, Briefcase, CaretLeft as ChevronLeft, CaretRight as ChevronRight, Flask, Gauge, SquaresFour as LayoutDashboard, ListBullets as ListOrdered, Scroll, WarningCircle as ShieldAlert, Terminal, User, Link as WebhookIcon,  } from "@phosphor-icons/react";
+
+import {
+ cn } from "@/lib/utils";
+import {
+ useDashboardTotals } from "@/hooks/use-api";
+import {
+ useSettings } from "@/components/settings-provider";
+import {
+ money, pnlClass } from "@/lib/format";
+import {
+ Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const groups = [
   {
@@ -37,21 +29,21 @@ const groups = [
       { title: "Strategies", url: "/strategies", icon: Boxes },
       { title: "Positions", url: "/positions", icon: Activity },
       { title: "Orderbook", url: "/orders", icon: ListOrdered },
-      { title: "Portfolio", url: "/portfolio", icon: BriefcaseBusiness },
+      { title: "Portfolio", url: "/portfolio", icon: Briefcase },
     ],
   },
   {
     label: "Infrastructure",
     items: [
       { title: "Brokers", url: "/brokers", icon: Gauge },
-      { title: "API & Webhooks", url: "/api-webhooks", icon: Webhook },
+      { title: "API & Webhooks", url: "/api-webhooks", icon: WebhookIcon },
       { title: "Logs", url: "/logs", icon: Terminal },
     ],
   },
   {
     label: "Analysis",
     items: [
-      { title: "Backtesting", url: "/backtesting", icon: FlaskConical },
+      { title: "Backtesting", url: "/backtesting", icon: Flask },
       { title: "Reports", url: "/reports", icon: BarChart3 },
     ],
   },
@@ -87,12 +79,12 @@ export function AppSidebar() {
           onClick={() => setCollapsed(!collapsed)}
           className="absolute -right-3 top-4 z-50 flex size-6 items-center justify-center rounded-full border border-sidebar-border bg-sidebar text-sidebar-foreground shadow-sm hover:bg-sidebar-accent"
         >
-          {collapsed ? <ChevronRight className="size-3.5" /> : <ChevronLeft className="size-3.5" />}
+          {collapsed ? <ChevronRight className="size-3.5" weight="bold" /> : <ChevronLeft className="size-3.5" weight="bold" />}
         </button>
 
         <header className={cn("flex items-center border-b border-sidebar-border py-4", collapsed ? "justify-center px-0" : "gap-3 px-4")}>
           <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-sm">
-            <ScrollText className="size-4" />
+            <Scroll className="size-4" />
           </div>
           {!collapsed && (
             <div className="min-w-0">

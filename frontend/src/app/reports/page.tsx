@@ -1,19 +1,32 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Download, FileText } from "lucide-react";
-import { toast } from "sonner";
-
-import { KpiCard, PageHeader, Panel, Tag, TableSkeleton } from "@/components/ui-kit";
-import { DataTable, type Column } from "@/components/data-table";
-import { DonutChart, EquityChart, PnlBarChart } from "@/components/charts";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useSettings } from "@/components/settings-provider";
-import { formatDate, formatNum, formatPct, pnlClass } from "@/lib/format";
 import {
+ useMemo, useState } from "react";
+import {
+ Download, FileText, Scales, ArrowsLeftRight, Trophy, ArrowCircleUp, ArrowCircleDown, Receipt } from "@phosphor-icons/react";
+import {
+ toast } from "sonner";
+
+import {
+ KpiCard, PageHeader, Panel, Tag, TableSkeleton } from "@/components/ui-kit";
+import {
+ DataTable, type Column } from "@/components/data-table";
+import {
+ DonutChart, EquityChart, PnlBarChart } from "@/components/charts";
+import {
+ Button } from "@/components/ui/button";
+import {
+ Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+ Skeleton } from "@/components/ui/skeleton";
+import {
+ Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+ useSettings } from "@/components/settings-provider";
+import {
+ formatDate, formatNum, formatPct, pnlClass } from "@/lib/format";
+import {
+
   useReportsSummary,
   useDailyPnl,
   useMonthlyPnl,
@@ -28,6 +41,8 @@ import {
 import type { DailyPnl } from "@/lib/api";
 
 const PALETTE = ["var(--primary)", "var(--profit)", "var(--warn)", "var(--loss)", "#8b5cf6"];
+
+import { useTabLoadTime } from "@/hooks/use-tab-load-time";
 
 export default function ReportsPage() {
   const { money } = useSettings();
@@ -44,6 +59,8 @@ export default function ReportsPage() {
   const { data: brokersData } = useBrokers();
   const { data: ordersData } = useOrders();
   const { data: totals } = useDashboardTotals();
+
+  useTabLoadTime("Reports", summaryLoading || dailyLoading || curveLoading);
 
   const brokers = brokersData || [];
   const orders = ordersData || [];
@@ -151,22 +168,22 @@ export default function ReportsPage() {
               </SelectContent>
             </Select>
             <Button size="sm" variant="outline" className="h-7 text-[11px]" onClick={() => exportCsv("P&L statement")}>
-              <Download className="size-3" /> Export CSV
+              <Download className="size-3" weight="bold" /> Export CSV
             </Button>
             <Button size="sm" variant="outline" className="h-7 text-[11px]" onClick={() => toast.info("Tax P&L statement queued", { description: "You'll be notified when the PDF is ready." })}>
-              <FileText className="size-3" /> Tax P&L
+              <FileText className="size-3" weight="duotone" /> Tax P&L
             </Button>
           </div>
         }
       />
 
       <div className="grid grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-6">
-        <KpiCard label="Net P&L" value={money(s.netPnl, { decimals: 0, sign: true })} tone={s.netPnl >= 0 ? "profit" : "loss"} sub={`${rows.length} sessions`} loading={summaryLoading} />
-        <KpiCard label="Total trades" value={formatNum(s.totalTrades, 0)} sub={`${orderStats.total} orders placed`} loading={summaryLoading} />
-        <KpiCard label="Win days" value={`${s.winDays}/${s.winDays + s.lossDays}`} sub={formatPct(s.winRate, 1, false)} loading={summaryLoading} />
-        <KpiCard label="Best day" value={money(s.bestDay, { decimals: 0, sign: true })} tone="profit" loading={summaryLoading} />
-        <KpiCard label="Worst day" value={money(s.worstDay, { decimals: 0, sign: true })} tone="loss" loading={summaryLoading} />
-        <KpiCard label="Charges & taxes" value={money(s.totalCharges, { decimals: 0 })} tone="warn" sub="Brokerage + STT + GST" loading={summaryLoading} />
+        <KpiCard label="Net P&L" value={money(s.netPnl, { decimals: 0, sign: true })} tone={s.netPnl >= 0 ? "profit" : "loss"} sub={`${rows.length} sessions`} loading={summaryLoading} icon={<Scales className="size-5 text-emerald-400" weight="duotone" />} />
+        <KpiCard label="Total trades" value={formatNum(s.totalTrades, 0)} sub={`${orderStats.total} orders placed`} loading={summaryLoading} icon={<ArrowsLeftRight className="size-5 text-blue-400" weight="duotone" />} />
+        <KpiCard label="Win days" value={`${s.winDays}/${s.winDays + s.lossDays}`} sub={formatPct(s.winRate, 1, false)} loading={summaryLoading} icon={<Trophy className="size-5 text-amber-400" weight="duotone" />} />
+        <KpiCard label="Best day" value={money(s.bestDay, { decimals: 0, sign: true })} tone="profit" loading={summaryLoading} icon={<ArrowCircleUp className="size-5 text-emerald-500" weight="duotone" />} />
+        <KpiCard label="Worst day" value={money(s.worstDay, { decimals: 0, sign: true })} tone="loss" loading={summaryLoading} icon={<ArrowCircleDown className="size-5 text-rose-500" weight="duotone" />} />
+        <KpiCard label="Charges & taxes" value={money(s.totalCharges, { decimals: 0 })} tone="warn" sub="Brokerage + STT + GST" loading={summaryLoading} icon={<Receipt className="size-5 text-slate-400" weight="duotone" />} />
       </div>
 
       <div className="grid gap-3 xl:grid-cols-3">

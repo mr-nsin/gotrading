@@ -2,6 +2,8 @@ import os
 import uuid
 import logging
 from engine.broker.base import BaseBroker
+from engine.caching.symbol_resolver import SymbolResolver
+
 from database import Session, engine
 from models import VirtualTrade
 
@@ -17,6 +19,7 @@ class ZerodhaBroker(BaseBroker):
     Integration for Zerodha API.
     """
     def __init__(self, user_id=None, broker_id=None):
+        self.resolver = SymbolResolver()
         super().__init__(user_id)
         
         self.api_key = os.getenv("ZERODHA_API_KEY")
@@ -91,3 +94,120 @@ class ZerodhaBroker(BaseBroker):
         except Exception as e:
             logger.error(f"Failed to place real Zerodha order: {e}")
             return None
+
+    def get_order_status(self, order_id: str) -> dict:
+        if not self.kite:
+            return {"order_id": order_id, "status": "mock"}
+        try:
+            orders = self.kite.orders()
+            for o in orders:
+                if str(o.get("order_id")) == str(order_id):
+                    return {
+                        "order_id": order_id,
+                        "status": o.get("status"),
+                        "filled_quantity": o.get("filled_quantity"),
+                        "average_price": o.get("average_price"),
+                        "raw": o
+                    }
+            return {"order_id": order_id, "status": "NOT_FOUND"}
+        except Exception as e:
+            logger.error(f"Error fetching order status: {e}")
+            return {}
+
+    def get_positions(self) -> list:
+        if not self.kite:
+            return []
+        try:
+            pos = self.kite.positions()
+            normalized = []
+            for p in pos.get("net", []):
+                normalized.append({
+                    "symbol": p.get("tradingsymbol"),
+                    "quantity": p.get("quantity"),
+                    "average_price": p.get("average_price"),
+                    "pnl": p.get("pnl"),
+                    "product_type": p.get("product"),
+                    "raw": p
+                })
+            return normalized
+        except Exception as e:
+            logger.error(f"Error fetching positions: {e}")
+            return []
+
+    def get_margins(self) -> dict:
+        if not self.kite:
+            return {"available": 0.0, "used": 0.0}
+        try:
+            margins = self.kite.margins()
+            equity = margins.get("equity", {})
+            return {
+                "available": float(equity.get("available", {}).get("live_balance", 0)),
+                "used": float(equity.get("utilised", {}).get("debits", 0)),
+                "raw": equity
+            }
+        except Exception as e:
+            logger.error(f"Error fetching margins: {e}")
+            return {"available": 0.0, "used": 0.0}
+
+    def get_instrument_list(self) -> list:
+        if not self.kite:
+            return []
+        try:
+            instruments = self.kite.instruments()
+            logger.info(f"Successfully fetched {len(instruments)} instruments from Zerodha")
+            return instruments
+        except Exception as e:
+            logger.error(f"Error fetching instrument list: {e}")
+            return []
+
+    def get_historical_data(self, symbol: str, from_date: str, to_date: str, resolution: str, exchange: str = "NSE") -> list:
+        token = self.resolver.resolve_token(symbol, self.__class__.__name__.replace("Broker", ""), exchange)
+        if not token or not self.kite:
+            logger.error(f"Could not resolve token for {symbol}")
+            return []
+        try:
+            return self.kite.historical_data(token, from_date, to_date, resolution)
+        except Exception as e:
+            logger.error(f"Zerodha historical data error: {e}")
+            return []
+
+    def get_market_depth(self, symbol: str, exchange: str = "NSE") -> dict:
+        token = self.resolver.resolve_token(symbol, self.__class__.__name__.replace("Broker", ""), exchange)
+        if not token or not self.kite:
+            logger.error(f"Could not resolve token for {symbol}")
+            return {}
+        try:
+            res = self.kite.quote(f"{exchange}:{symbol}")
+            return res.get(f"{exchange}:{symbol}", {}).get("depth", {})
+        except Exception as e:
+            logger.error(f"Zerodha market depth error: {e}")
+            return {}
+
+    def get_option_chain(self, underlying_symbol: str, expiry_date: str) -> dict:
+        from sqlmodel import select
+        from models import Instrument
+        try:
+            with Session(engine) as session:
+                instruments = session.exec(
+                    select(Instrument)
+                    .where(Instrument.symbol.startswith(underlying_symbol))
+                    .where(Instrument.segment == "OPT")
+                ).all()
+
+                chain = {"calls": [], "puts": []}
+                for inst in instruments:
+                    item = {
+                        "symbol": inst.symbol,
+                        "strike": inst.strike,
+                        "token": inst.zerodha_token,
+                        "ltp": inst.ltp
+                    }
+                    if inst.option_type == "CE":
+                        chain["calls"].append(item)
+                    elif inst.option_type == "PE":
+                        chain["puts"].append(item)
+
+                return chain
+        except Exception as e:
+            logger.error(f"Error building Zerodha option chain: {e}")
+            return {"calls": [], "puts": []}

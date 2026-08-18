@@ -1,14 +1,20 @@
 "use client";
 
-import { Plus } from "lucide-react";
-import { useFieldArray, useFormContext } from "react-hook-form";
+import {
+ Plus } from "@phosphor-icons/react";
+import {
+ useFieldArray, useFormContext } from "react-hook-form";
 
-import { Button } from "@/components/ui/button";
-import { FormField, FormItem, FormMessage } from "@/components/ui/form";
+import {
+ Button } from "@/components/ui/button";
+import {
+ FormField, FormItem, FormMessage } from "@/components/ui/form";
 
-import { ConditionBlock } from "./condition-block";
+import {
+ ConditionBlock } from "./condition-block";
 import type { StrategyFormValues } from "./schema";
-import { createEmptyRule } from "./utils";
+import {
+ createEmptyRule } from "./utils";
 
 interface RuleBuilderProps {
   rulesField: "entryRules" | "exitRules";
@@ -63,7 +69,7 @@ export function RuleBuilder({ rulesField, joinField, label, defaultJoin = "AND" 
           className="ml-auto h-6 gap-1 text-[11px]"
           onClick={() => append(createEmptyRule())}
         >
-          <Plus className="size-3" /> Add condition
+          <Plus className="size-3" weight="bold" /> Add condition
         </Button>
       </div>
 

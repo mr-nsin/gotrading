@@ -1,12 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
-import { ArrowLeft, Check, Loader2 } from "lucide-react";
-import { toast } from "sonner";
-
-import { Button } from "@/components/ui/button";
 import {
+ useCallback, useEffect, useState } from "react";
+import {
+ ArrowLeft, Check, CircleNotch as Loader2 } from "@phosphor-icons/react";
+import {
+ toast } from "sonner";
+
+import {
+ Button } from "@/components/ui/button";
+import {
+
   Dialog,
   DialogContent,
   DialogDescription,
@@ -14,10 +19,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useAddBroker } from "@/hooks/use-api";
-import { cn } from "@/lib/utils";
+import {
+ Input } from "@/components/ui/input";
+import {
+ Label } from "@/components/ui/label";
+import {
+ useAddBroker } from "@/hooks/use-api";
+import {
+ cn } from "@/lib/utils";
 
 export const BROKER_TYPES = [
   { id: "KITE", name: "Zerodha Kite", logo: "/brokers/zerodha.svg" },
@@ -197,7 +206,7 @@ export function AddBrokerDialog({ open, onOpenChange }: AddBrokerDialogProps) {
                 setTestStatus("idle");
               }}
             >
-              <ArrowLeft className="size-3.5" />
+              <ArrowLeft className="size-3.5" weight="bold" />
               Back to broker selection
             </Button>
 
@@ -268,7 +277,7 @@ export function AddBrokerDialog({ open, onOpenChange }: AddBrokerDialogProps) {
 
             {testStatus === "success" && (
               <p className="flex items-center gap-1.5 text-xs text-profit">
-                <Check className="size-3.5" />
+                <Check className="size-3.5" weight="bold" />
                 Connection test passed
               </p>
             )}
@@ -289,7 +298,7 @@ export function AddBrokerDialog({ open, onOpenChange }: AddBrokerDialogProps) {
             >
               {testStatus === "testing" ? (
                 <>
-                  <Loader2 className="mr-2 size-3.5 animate-spin" />
+                  <Loader2 className="mr-2 size-3.5 animate-spin" weight="bold" />
                   Testing…
                 </>
               ) : (
@@ -304,7 +313,7 @@ export function AddBrokerDialog({ open, onOpenChange }: AddBrokerDialogProps) {
             >
               {addBroker.isPending ? (
                 <>
-                  <Loader2 className="mr-2 size-3.5 animate-spin" />
+                  <Loader2 className="mr-2 size-3.5 animate-spin" weight="bold" />
                   Connecting…
                 </>
               ) : (

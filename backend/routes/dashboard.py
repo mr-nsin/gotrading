@@ -156,3 +156,38 @@ def get_intraday_curve(session: Session = Depends(get_session)):
         })
 
     return curve
+
+@router.get("/pnl-by-strategy")
+def get_pnl_by_strategy(session: Session = Depends(get_session)):
+    """Mock endpoint for PNL by strategy chart."""
+    return [
+        {"name": "Nifty Iron Condor", "pnl": 12500},
+        {"name": "BankNifty Straddle", "pnl": -3200},
+        {"name": "FinNifty Scalping", "pnl": 8900},
+        {"name": "Midcap Swing", "pnl": 1500}
+    ]
+
+@router.get("/allocation")
+def get_allocation(session: Session = Depends(get_session)):
+    """Mock endpoint for Broker Allocation chart."""
+    return [
+        {"name": "Zerodha", "value": 1200000, "color": "var(--chart-1)"},
+        {"name": "Upstox", "value": 800000, "color": "var(--chart-2)"},
+        {"name": "AngelOne", "value": 450000, "color": "var(--chart-3)"}
+    ]
+
+@router.get("/top-movers")
+def get_top_movers(session: Session = Depends(get_session)):
+    """Mock endpoint for Top Movers tables."""
+    return {
+        "gainers": [
+            {"symbol": "RELIANCE", "dayChange": 0.025, "unrealized": 4500},
+            {"symbol": "HDFCBANK", "dayChange": 0.018, "unrealized": 3200},
+            {"symbol": "TCS", "dayChange": 0.012, "unrealized": 2100}
+        ],
+        "losers": [
+            {"symbol": "INFY", "dayChange": -0.031, "unrealized": -5400},
+            {"symbol": "ITC", "dayChange": -0.015, "unrealized": -1800},
+            {"symbol": "WIPRO", "dayChange": -0.009, "unrealized": -900}
+        ]
+    }
