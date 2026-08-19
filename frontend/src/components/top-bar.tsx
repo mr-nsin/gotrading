@@ -112,135 +112,148 @@ export function TopBar() {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex items-center gap-6">
-        <div className="flex items-center gap-4">
-          <div className="flex flex-col justify-center">
-            <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Equity</span>
-            <span className="num text-sm font-bold tracking-tight">{money(t.portfolioValue, { decimals: 0 })}</span>
-          </div>
-          <div className="h-8 w-px bg-border" />
-          <div className="flex flex-col justify-center">
-            <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Day P&L</span>
-            <div className={`num flex items-baseline gap-1.5 text-sm font-bold tracking-tight ${pnlClass(t.todayPnl)}`}>
-              {money(t.todayPnl, { sign: true, decimals: 0 })}
-              <span className="text-[11px] font-medium opacity-80">{formatPct(t.todayPnlPct)}</span>
+    // flex-col wrapper: the kill-switch banner below was a direct child of a
+    // flex-row header, so it laid out as a third column squeezed inside the 56px
+    // bar instead of a full-width strip under it.
+    <header className="sticky top-0 z-30 flex flex-col border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="flex h-14 items-center justify-between gap-4 px-4">
+        <div className="flex min-w-0 items-center gap-6">
+          <div className="flex shrink-0 items-center gap-4">
+            {/* whitespace-nowrap throughout: without it "₹52.20 L" broke after the
+                amount and rendered 40px tall against a 20px line-height, pushing
+                the header's content to 65px inside a 56px bar and clipping the
+                labels off the top. */}
+            <div className="flex shrink-0 flex-col justify-center">
+              <span className="whitespace-nowrap text-[10px] font-medium uppercase leading-tight tracking-wider text-muted-foreground">Equity</span>
+              <span className="num whitespace-nowrap text-sm font-bold leading-tight tracking-tight">{money(t.portfolioValue, { decimals: 0 })}</span>
+            </div>
+            <div className="h-8 w-px shrink-0 bg-border" />
+            <div className="flex shrink-0 flex-col justify-center">
+              <span className="whitespace-nowrap text-[10px] font-medium uppercase leading-tight tracking-wider text-muted-foreground">Day P&L</span>
+              <div className={`num flex items-baseline gap-1.5 whitespace-nowrap text-sm font-bold leading-tight tracking-tight ${pnlClass(t.todayPnl)}`}>
+                {money(t.todayPnl, { sign: true, decimals: 0 })}
+                <span className="whitespace-nowrap text-[11px] font-medium opacity-80">{formatPct(t.todayPnlPct)}</span>
+              </div>
+            </div>
+            <div className="hidden h-8 w-px shrink-0 bg-border xl:block" />
+            <div className="hidden shrink-0 flex-col justify-center xl:flex">
+              <span className="whitespace-nowrap text-[10px] font-medium uppercase leading-tight tracking-wider text-muted-foreground">Margin Avl.</span>
+              <span className="num whitespace-nowrap text-sm font-bold leading-tight tracking-tight">{money(t.marginAvailable, { decimals: 0 })}</span>
             </div>
           </div>
-          <div className="hidden h-8 w-px bg-border xl:block" />
-          <div className="hidden flex-col justify-center xl:flex">
-            <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Margin Avl.</span>
-            <span className="num text-sm font-bold tracking-tight">{money(t.marginAvailable, { decimals: 0 })}</span>
+
+          <div className="hidden min-w-0 items-center gap-1.5 xl:flex">
+            {brokers.slice(0, 4).map((b) => (
+              <div key={b.id} className="flex min-w-0 items-center gap-1.5 rounded-full border border-border bg-surface-2 pr-2">
+                <BrokerLogo name={b.name || b.broker_type || ""} size={20} className="shrink-0 rounded-full" />
+                <StatusPill status={b.status.toLowerCase()} label={b.name} dot className="truncate border-0 bg-transparent pl-0 text-xs" />
+              </div>
+            ))}
           </div>
         </div>
 
-        <div className="hidden items-center gap-1.5 xl:flex">
-          {brokers.slice(0, 4).map((b) => (
-            <div key={b.id} className="flex items-center gap-1.5 rounded-full border border-border bg-surface-2 pr-2">
-              <BrokerLogo name={b.name || b.broker_type || ""} size={20} className="rounded-full" />
-              <StatusPill status={b.status.toLowerCase()} label={b.name} dot className="border-0 bg-transparent pl-0 text-xs" />
-            </div>
-          ))}
-        </div>
-      </div>
+        <div className="flex shrink-0 items-center gap-3">
+          <Clock />
 
-      <div className="flex items-center gap-3">
-        <Clock />
-
-        <div className="flex items-center gap-2 rounded-lg bg-muted/50 p-1">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className={cn(
-                  "h-8 w-[130px] justify-start text-left font-normal",
-                  !date && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" weight="duotone" />
-                {date ? format(date, "MMM dd, yyyy") : <span>Pick a date</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="end">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-              />
-            </PopoverContent>
-          </Popover>
-
-          <Select value={strategyFilter} onValueChange={setStrategyFilter}>
-            <SelectTrigger className="h-8 w-[140px] text-xs font-medium">
-              <SelectValue placeholder="Strategy" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Strategies</SelectItem>
-              {strategies.map((s) => (
-                <SelectItem key={s.id} value={s.id}>
-                  {s.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={brokerFilter} onValueChange={setBrokerFilter}>
-            <SelectTrigger className="h-8 w-[140px] text-xs font-medium">
-              <SelectValue placeholder="Broker" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Brokers</SelectItem>
-              {brokers.map((b) => (
-                <SelectItem key={b.id} value={b.id}>
-                  {b.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex items-center gap-1.5">
-          <Button
-            variant="outline"
-            size="sm"
-            className="num hidden h-8 w-14 px-0 text-xs font-medium sm:inline-flex"
-            onClick={() => setNumberMode(numberMode === "indian" ? "international" : "indian")}
-          >
-            {numberMode === "indian" ? "L / Cr" : "M / B"}
-          </Button>
-
-          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={toggleTheme} aria-label="Toggle theme">
-            {theme === "dark" ? <Sun className="h-4 w-4" weight="duotone" /> : <Moon className="h-4 w-4" weight="duotone" />}
-          </Button>
-
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="destructive" size="sm" className="h-8 gap-1.5 px-3 text-xs font-bold shadow-sm">
-                <Power className="size-3.5" weight="bold" />
-                <span className="hidden sm:inline">KILL</span>
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Activate emergency kill switch?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This squares off <strong>all open positions</strong> across every broker account and pauses
-                  all {t.activeStrategies} live strategies immediately. This action cannot be undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  onClick={handleKillSwitch}
-                  disabled={emergencyStopMutation.isPending}
+          {/* These controls were fixed-width and always visible, so at ~730px the
+              row could not fit and forced the readouts to wrap. They now reveal
+              progressively: selects narrow below xl, and the date picker — the
+              widest and least-used control — drops out below lg. */}
+          <div className="flex items-center gap-2 rounded-lg bg-muted/50 p-1">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "hidden h-8 w-[130px] justify-start text-left font-normal lg:inline-flex",
+                    !date && "text-muted-foreground"
+                  )}
                 >
-                  {emergencyStopMutation.isPending ? "Activating..." : "Yes, kill everything"}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+                  <CalendarIcon className="mr-2 h-4 w-4" weight="duotone" />
+                  {date ? format(date, "MMM dd, yyyy") : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={setDate}
+                />
+              </PopoverContent>
+            </Popover>
+
+            <Select value={strategyFilter} onValueChange={setStrategyFilter}>
+              <SelectTrigger className="h-8 w-[112px] text-xs font-medium xl:w-[140px]">
+                <SelectValue placeholder="Strategy" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Strategies</SelectItem>
+                {strategies.map((s) => (
+                  <SelectItem key={s.id} value={s.id}>
+                    {s.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={brokerFilter} onValueChange={setBrokerFilter}>
+              <SelectTrigger className="h-8 w-[112px] text-xs font-medium xl:w-[140px]">
+                <SelectValue placeholder="Broker" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Brokers</SelectItem>
+                {brokers.map((b) => (
+                  <SelectItem key={b.id} value={b.id}>
+                    {b.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <Button
+              variant="outline"
+              size="sm"
+              className="num hidden h-8 w-14 px-0 text-xs font-medium sm:inline-flex"
+              onClick={() => setNumberMode(numberMode === "indian" ? "international" : "indian")}
+            >
+              {numberMode === "indian" ? "L / Cr" : "M / B"}
+            </Button>
+
+            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={toggleTheme} aria-label="Toggle theme">
+              {theme === "dark" ? <Sun className="h-4 w-4" weight="duotone" /> : <Moon className="h-4 w-4" weight="duotone" />}
+            </Button>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" size="sm" className="h-8 gap-1.5 px-3 text-xs font-bold shadow-sm">
+                  <Power className="size-3.5" weight="bold" />
+                  <span className="hidden sm:inline">KILL</span>
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Activate emergency kill switch?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This squares off <strong>all open positions</strong> across every broker account and pauses
+                    all {t.activeStrategies} live strategies immediately. This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    onClick={handleKillSwitch}
+                    disabled={emergencyStopMutation.isPending}
+                  >
+                    {emergencyStopMutation.isPending ? "Activating..." : "Yes, kill everything"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         </div>
       </div>
 

@@ -18,7 +18,7 @@ const INR_COMPACT = new Intl.NumberFormat("en-IN", {
 });
 
 export function money(value: number, opts: MoneyOpts = {}): string {
-  if (opts.compact) return formatINRCompact(value);
+  if (opts.compact) return formatINRCompact(value, opts);
   return formatINR(value, opts);
 }
 
@@ -36,9 +36,12 @@ export function formatINR(value: number, opts: MoneyOpts = {}): string {
   return formatter.format(value);
 }
 
-export function formatINRCompact(value: number): string {
+export function formatINRCompact(value: number, opts: MoneyOpts = {}): string {
   const absValue = Math.abs(value);
-  const sign = value < 0 ? "-" : "";
+  // `sign` was previously ignored here, so money(v, { sign: true, compact: true })
+  // silently dropped the leading "+" and a positive P&L read as a bare number —
+  // direction was carried by colour alone.
+  const sign = value < 0 ? "-" : opts.sign && value > 0 ? "+" : "";
   
   if (absValue >= 10000000) {
     return `${sign}₹${(absValue / 10000000).toFixed(2)} Cr`;
