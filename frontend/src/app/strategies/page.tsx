@@ -49,6 +49,10 @@ export default function StrategiesPage() {
         loading={isLoading}
         height="calc(100vh - 16rem)"
         onRowClick={(row) => router.push(`/strategies/${row.id}`)}
+        stateKey="strategies"
+        exportName="strategies"
+        selectable={false}
+        emptyMessage="No strategies configured yet"
       />
     </div>
   );

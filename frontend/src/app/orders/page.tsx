@@ -69,6 +69,10 @@ export default function OrdersPage() {
         loading={isLoading}
         height="calc(100vh - 16rem)"
         onRowClick={setActive}
+        stateKey="orderbook"
+        exportName="orderbook"
+        selectable={false}
+        emptyMessage="No orders for the selected filters"
       />
 
       <Sheet open={!!active} onOpenChange={(o) => !o && setActive(null)}>

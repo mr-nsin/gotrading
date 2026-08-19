@@ -1,11 +1,17 @@
 "use client";
 
 import { useMemo } from "react";
-import "ag-grid-community/styles/ag-grid.css";
-
 import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/styles/ag-theme-alpine.css";
 import type { ColDef } from "ag-grid-community";
+
+// Legacy `ag-grid.css` / `ag-theme-alpine.css` imports were removed here. Even
+// though nothing currently renders this component, a legacy stylesheet import is
+// global in Next.js and would have disabled the Theming API across the whole app
+// the moment anything imported this file.
+import { registerGridModules } from "@/lib/grid-modules";
+import { panelTheme } from "@/lib/theme";
+
+registerGridModules();
 
 export function AgGridTable<T>({
   rowData,
@@ -18,23 +24,27 @@ export function AgGridTable<T>({
   height?: string;
   loading?: boolean;
 }) {
-  const defaultColDef = useMemo(() => ({
-    sortable: true,
-    resizable: true,
-    flex: 1,
-    minWidth: 100,
-  }), []);
+  const defaultColDef = useMemo<ColDef>(
+    () => ({
+      sortable: true,
+      resizable: true,
+      filter: true,
+      flex: 1,
+      minWidth: 100,
+    }),
+    []
+  );
 
   return (
-    <div className="ag-theme-alpine-dark w-full" style={{ height }}>
+    <div className="w-full" style={{ height }}>
       <AgGridReact
+        theme={panelTheme}
         rowData={loading ? undefined : rowData}
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
-        animateRows={true}
-        rowSelection="single"
-        overlayLoadingTemplate={loading ? '<span class="ag-overlay-loading-center">Loading...</span>' : undefined}
-        overlayNoRowsTemplate='<span class="ag-overlay-no-rows-center">No records match the current filters.</span>'
+        animateRows={false}
+        rowSelection={{ mode: "singleRow", checkboxes: false, enableClickSelection: true }}
+        overlayNoRowsTemplate={'<span style="color:var(--muted-foreground);font-size:13px">No records match the current filters.</span>'}
       />
     </div>
   );

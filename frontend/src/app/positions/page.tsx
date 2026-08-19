@@ -63,6 +63,9 @@ export default function PositionsPage() {
         rowData={positions}
         loading={isLoading}
         height="calc(100vh - 16rem)"
+        stateKey="positions"
+        exportName="positions"
+        emptyMessage="No open positions"
       />
     </div>
   );

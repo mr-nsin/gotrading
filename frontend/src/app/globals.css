@@ -247,6 +247,11 @@
 }
 
 @layer utilities {
+  /* Terminal grid tokens.
+     Defined on :root as well as .terminal-grid so that every grid resolves them,
+     including DataTable instances that are not nested inside a .terminal-grid
+     shell. No name collides with the base :root palette. */
+  :root,
   .terminal-grid {
     --grid-bg:            #0A0E14;
     --grid-surface:       #0F1420;
@@ -282,17 +287,69 @@
     --side-sell:          #FF4D5E;
   }
 
+  /* Directional tick flash.
+
+     TradingView's screener flashes the whole cell background on a price change
+     and distinguishes direction (.growing gets a green fill, .falling a red
+     one) rather than using one neutral colour for every update. AG Grid's
+     built-in enableCellChangeFlash only does the neutral version, so TickCell
+     applies these classes to the cell element directly.
+
+     The brief hold at 35% keeps the flash perceptible at high tick rates —
+     a pure linear fade reads as a flicker once updates arrive faster than
+     ~3/sec. Animating only background-color keeps this on the compositor and
+     off the layout path. */
   @keyframes tick-flash-up {
     0%   { background-color: var(--positive-flash); }
+    35%  { background-color: var(--positive-flash); }
     100% { background-color: transparent; }
   }
   @keyframes tick-flash-down {
     0%   { background-color: var(--negative-flash); }
+    35%  { background-color: var(--negative-flash); }
     100% { background-color: transparent; }
   }
-  .ag-cell.flash-up   { animation: tick-flash-up 500ms ease-out; }
-  .ag-cell.flash-down { animation: tick-flash-down 500ms ease-out; }
-  
+  .ag-cell.flash-up   { animation: tick-flash-up 600ms ease-out; }
+  .ag-cell.flash-down { animation: tick-flash-down 600ms ease-out; }
+
+  /* Under reduced motion the flash keeps its colour but loses the fade. The tint
+     is information here — which way the price moved — not decoration, so
+     suppressing it entirely would drop a signal rather than calm one. TickCell
+     strips the class after 600ms, so the tint holds for that long and then
+     clears, with nothing animating. */
+  @media (prefers-reduced-motion: reduce) {
+    .ag-cell.flash-up {
+      animation: none;
+      background-color: var(--positive-flash);
+    }
+    .ag-cell.flash-down {
+      animation: none;
+      background-color: var(--negative-flash);
+    }
+  }
+
+  /* Pinned columns are the terminal equivalent of TradingView's sticky first
+     cell. A cast shadow separates them from the scrolling body; without it the
+     pinned instrument column visually merges into the columns sliding under it.
+
+     Targets the last pinned cell rather than the pinned container: AG Grid v36
+     renamed its container classes (ag-pinned-left-cols-container became
+     ag-grid-pinned-left-cells), but .ag-cell-last-left-pinned and
+     .ag-header-cell-last-left-pinned are stable across both. */
+  .terminal-grid .ag-cell-last-left-pinned,
+  .terminal-grid .ag-header-cell-last-left-pinned {
+    box-shadow: 6px 0 8px -6px rgb(0 0 0 / 0.7);
+    clip-path: inset(0 -10px 0 0);
+  }
+
+  /* Numeric header labels sit right so they line up over tabular-nums values. */
+  .terminal-grid .ag-right-aligned-header .ag-header-cell-label {
+    justify-content: flex-end;
+  }
+  .terminal-grid .ag-center-header .ag-header-cell-label {
+    justify-content: center;
+  }
+
   .cell-numeric {
     font-family: var(--font-mono), monospace;
     font-variant-numeric: tabular-nums;
