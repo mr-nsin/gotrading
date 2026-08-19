@@ -3,8 +3,8 @@ import csv
 import io
 import requests
 from sqlmodel import Session, select
-from backend.database import engine
-from backend.models import Instrument
+from database import engine
+from models import Instrument
 
 logger = logging.getLogger(__name__)
 

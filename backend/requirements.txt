@@ -1,8 +1,56 @@
-smartapi-python
-dhanhq
-kiteconnect
-dhanhq
-smartapi-python
+# GoTrading backend dependencies
+# Regenerated from actual imports across backend/ (2026-08-19)
+
+# --- Web framework ---
+fastapi
+uvicorn[standard]
+starlette
+pydantic
+python-multipart
+
+# --- Database ---
+sqlmodel
+sqlalchemy
+alembic
+asyncpg           # async Postgres driver (database.py uses postgresql+asyncpg)
+psycopg2-binary   # sync Postgres driver (alembic migrations)
+aiosqlite         # async SQLite fallback
+
+# --- Auth / crypto ---
+PyJWT
+cryptography      # Fernet encryption in utils/encryption.py
+pyotp             # broker TOTP login flows
+
+# --- Caching / serialization ---
+redis
+msgpack
+
+# --- HTTP ---
+requests
+urllib3
+python-dotenv
+
+# --- Quant / data ---
+numpy
+pandas
+scipy
+
+# --- ML (heavy: install only if using the RL trainer) ---
+torch
 stable-baselines3[extra]
 gym
 
+# --- Broker SDKs ---
+kiteconnect          # Zerodha
+fyers-apiv3          # Fyers
+dhanhq               # Dhan
+smartapi-python      # Angel One
+upstox-python-sdk    # Upstox
+py5paisa             # 5paisa
+alice-blue           # Alice Blue
+openalgo
+# Kotak Neo (ks_api_client) is NOT on PyPI - Kotak ships it via GitHub.
+# kotakneo_broker.py imports it in a try/except and degrades to mock mode,
+# so leaving it out is safe. To enable live Kotak trading, install from
+# Kotak's official repo. Do NOT install the PyPI package "ksapi" - it is
+# unrelated to Kotak.
