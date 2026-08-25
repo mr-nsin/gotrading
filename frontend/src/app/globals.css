@@ -287,6 +287,47 @@
     --side-sell:          #FF4D5E;
   }
 
+  /* Light-mode overrides for the same tokens.
+     Without these the grid kept the dark literals above in light mode, so every
+     table rendered as a dark slab inside an otherwise white page. Greens and
+     reds are deepened rather than reused: the dark-mode values are tuned for a
+     near-black ground and fail contrast on white. */
+  .light,
+  .light .terminal-grid {
+    --grid-bg:            #F5F7FA;
+    --grid-surface:       #FFFFFF;
+    --row-bg:             #FFFFFF;
+    --row-bg-alt:         #FAFBFD;
+    --row-bg-hover:       #F1F5F9;
+    --row-bg-selected:    #E7F0FD;
+    --header-bg:          #F5F7FA;
+    --border-hairline:    #E6EAF0;
+    --border-strong:      #D4DAE3;
+    --text-primary:       #16202E;
+    --text-secondary:     #55627A;
+    --text-muted:         #7C889B;
+    --text-on-accent:     #FFFFFF;
+    --accent-amber:       #B87400;
+    --accent-amber-dim:   #E8C89A;
+    --positive:           #0A8F5D;
+    --positive-bg:        rgba(10, 143, 93, 0.10);
+    --positive-flash:     rgba(10, 143, 93, 0.22);
+    --negative:           #CC2731;
+    --negative-bg:        rgba(204, 39, 49, 0.10);
+    --negative-flash:     rgba(204, 39, 49, 0.22);
+    --neutral:            #5B6675;
+    --status-open:        #1D4ED8;
+    --status-open-bg:     rgba(29, 78, 216, 0.10);
+    --status-pending:     #B87400;
+    --status-pending-bg:  rgba(184, 116, 0, 0.12);
+    --status-closed:      #5B6675;
+    --status-closed-bg:   rgba(91, 102, 117, 0.12);
+    --status-rejected:    #CC2731;
+    --status-rejected-bg: rgba(204, 39, 49, 0.10);
+    --side-buy:           #0A8F5D;
+    --side-sell:          #CC2731;
+  }
+
   /* Directional tick flash.
 
      TradingView's screener flashes the whole cell background on a price change

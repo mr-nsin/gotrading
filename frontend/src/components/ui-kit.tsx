@@ -222,6 +222,51 @@ export function PageHeader({
   );
 }
 
+/**
+ * A titled section whose heading sits *outside* the data, styled like the page
+ * heading rather than a card header.
+ *
+ * Use this instead of `Panel` for tables. `Panel` wraps its title in a bordered
+ * CardHeader, so a table underneath read as "header, then a boxed thing with a
+ * second header" — two competing headers for one set of data. Here the heading
+ * is plain text above a single hairline-bordered data region, so the only
+ * header inside the data is the column header.
+ */
+export function TableSection({
+  title,
+  subtitle,
+  actions,
+  live,
+  children,
+  className,
+}: {
+  title: ReactNode;
+  subtitle?: ReactNode;
+  actions?: ReactNode;
+  live?: boolean;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <section className={cn("flex min-w-0 flex-col gap-2", className)}>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="min-w-0">
+          <h2 className="flex items-center gap-2 text-base font-semibold tracking-tight">
+            {title}
+            {live && <span className="live-dot" />}
+          </h2>
+          {subtitle && <p className="mt-0.5 text-xs text-muted-foreground">{subtitle}</p>}
+        </div>
+        {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
+      </div>
+      {/* Hairline only — enough to bound the data, not a second card. */}
+      <div className="min-w-0 overflow-hidden rounded-md border border-border/60 bg-card/30">
+        {children}
+      </div>
+    </section>
+  );
+}
+
 export function EmptyState({ message }: { message: string }) {
   return (
     <div className="flex h-32 items-center justify-center text-xs text-muted-foreground">{message}</div>

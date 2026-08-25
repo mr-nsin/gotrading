@@ -69,6 +69,9 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     if (savedTheme) {
       setTheme(savedTheme);
       document.documentElement.classList.toggle("light", savedTheme === "light");
+      // layout.tsx ships class="dark"; without clearing it the element ends up
+      // class="dark light" and the two themes are active simultaneously.
+      document.documentElement.classList.toggle("dark", savedTheme === "dark");
     }
     const savedCompact = localStorage.getItem("compactNumbers");
     if (savedCompact) setCompact(savedCompact === "true");
@@ -91,6 +94,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
     document.documentElement.classList.toggle("light", newTheme === "light");
+    document.documentElement.classList.toggle("dark", newTheme === "dark");
   };
 
   const money = (value: number, options: MoneyOptions = {}): string => {

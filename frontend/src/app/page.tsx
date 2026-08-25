@@ -8,7 +8,7 @@ import {
   ChartLineUp as Activity, Cube as Boxes, CurrencyInr as IndianRupee, Stack as Layers, PiggyBank, Target, TrendDown as TrendingDown, TrendUp as TrendingUp, Wallet,  } from "@phosphor-icons/react";
 
 import {
- KpiCard, PageHeader, Panel, Sparkline, StatusPill, Tag, SideTag, TableSkeleton } from "@/components/ui-kit";
+ KpiCard, PageHeader, Panel, TableSection, Sparkline, StatusPill, Tag, SideTag, TableSkeleton } from "@/components/ui-kit";
 import {
  DataTable, type Column } from "@/components/data-table";
 import {
@@ -350,27 +350,29 @@ export default function Dashboard() {
           <PnlBarChart data={pnlByStrategy} xKey="name" height={280} vertical />
         </Panel>
         <div className="grid gap-6">
-          <Panel title="Top Gainers" subtitle="Open positions" bodyClassName="p-0">
-            <div className="px-1"><DataTable columns={moverCols} rows={gainers} rowKey={(p) => p.id} maxHeight="14rem" dense /></div>
-          </Panel>
-          <Panel title="Top Losers" subtitle="Open positions" bodyClassName="p-0">
-            <div className="px-1"><DataTable columns={moverCols} rows={losers} rowKey={(p) => p.id} maxHeight="14rem" dense /></div>
-          </Panel>
+          <TableSection title="Top Gainers" subtitle="Open positions">
+            <DataTable columns={moverCols} rows={gainers} rowKey={(p) => p.id} maxHeight="14rem" dense />
+          </TableSection>
+          <TableSection title="Top Losers" subtitle="Open positions">
+            <DataTable columns={moverCols} rows={losers} rowKey={(p) => p.id} maxHeight="14rem" dense />
+          </TableSection>
         </div>
       </div>
 
-      <Panel title="Strategy Performance" subtitle={`${filteredStrategies.length} strategies`} live bodyClassName="p-1">
+      <TableSection title="Strategy Performance" subtitle={`${filteredStrategies.length} strategies`} live>
         {strategiesLoading ? <TableSkeleton rows={5} cols={9} /> : <DataTable columns={strategyCols} rows={filteredStrategies} rowKey={(s) => s.id} maxHeight="30rem" />}
-      </Panel>
+      </TableSection>
 
-      <div className="grid gap-6 xl:grid-cols-2">
-        <Panel title="Recent Orders" subtitle="Across all strategies" live bodyClassName="p-1">
-          {ordersLoading ? <TableSkeleton rows={5} cols={7} /> : <DataTable columns={orderCols} rows={recentOrders} rowKey={(o) => o.id} maxHeight="24rem" />}
-        </Panel>
-        <Panel title="Broker Account Snapshot" bodyClassName="p-1">
-          {brokersLoading ? <TableSkeleton rows={3} cols={7} /> : <DataTable columns={brokerCols} rows={brokers} rowKey={(b) => b.id} maxHeight="24rem" />}
-        </Panel>
-      </div>
+      {/* Full width rather than a two-up split: these tables carry 7+ columns
+          each, and halving the width was what forced instrument names and
+          statuses to truncate. */}
+      <TableSection title="Recent Orders" subtitle="Across all strategies" live>
+        {ordersLoading ? <TableSkeleton rows={5} cols={7} /> : <DataTable columns={orderCols} rows={recentOrders} rowKey={(o) => o.id} maxHeight="24rem" />}
+      </TableSection>
+
+      <TableSection title="Broker Account Snapshot" subtitle={`${brokers.length} connected`}>
+        {brokersLoading ? <TableSkeleton rows={3} cols={7} /> : <DataTable columns={brokerCols} rows={brokers} rowKey={(b) => b.id} maxHeight="24rem" />}
+      </TableSection>
     </div>
   );
 }

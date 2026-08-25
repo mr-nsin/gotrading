@@ -60,8 +60,9 @@ const base = {
   cellHorizontalPadding: 12,
   headerColumnResizeHandleColor: "var(--border-strong, #2A3446)",
 
-  // Compact chrome for the scrollbars inside the viewport
-  browserColorScheme: "dark" as const,
+  // Scrollbar chrome follows the page rather than being pinned to dark — hard
+  // "dark" rendered dark scrollbars over white panels in light mode.
+  browserColorScheme: "inherit" as const,
 } satisfies Parameters<typeof themeQuartz.withParams>[0];
 
 /** Default (comfortable) terminal theme. */
@@ -108,7 +109,8 @@ const panelBase = {
   fontSize: 13,
   accentColor: "var(--primary)",
   cellHorizontalPadding: 12,
-  browserColorScheme: "dark" as const,
+  // See note above — panels sit on white cards in light mode.
+  browserColorScheme: "inherit" as const,
 } satisfies Parameters<typeof themeQuartz.withParams>[0];
 
 export const panelTheme: Theme = themeQuartz.withParams({

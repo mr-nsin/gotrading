@@ -50,8 +50,14 @@ const CustomCell = (props: any) => {
   const { align, cellRenderFunc } = props;
 
   return (
+    // `leading-normal` is load-bearing. AG Grid publishes --ag-line-height set to
+    // the row height (45px here) so single-line text centres itself vertically.
+    // Cells that render two stacked lines — an instrument name above a row of
+    // Tag chips — inherited it on *each* line, so ~37px of content measured 92px
+    // and overflowed a 48px row, bleeding across the row borders. Resetting the
+    // line height keeps multi-line cells at their natural size.
     <div
-      className={`flex h-full w-full items-center overflow-hidden text-[13px] ${
+      className={`flex w-full items-center overflow-hidden py-1 text-[13px] leading-normal ${
         align === "right"
           ? "justify-end text-right font-mono tabular-nums"
           : align === "center"
@@ -94,9 +100,18 @@ export function DataTable<T>({
         field: c.key,
         headerName: isString ? (c.header as string) : undefined,
         sortable: c.sortable !== false,
-        flex: c.width ? undefined : 1,
+        // Weight the free space instead of splitting it evenly. Every column
+        // having flex:1 gave a "Side" badge the same width as "Strategy", so
+        // names truncated to "Delta He…" while badge columns sat half empty.
+        // Left-aligned columns carry the long text; right/centre-aligned ones are
+        // numerics and badges that need far less room.
+        flex: c.width ? undefined : c.align === "right" || c.align === "center" ? 1 : 2,
         width: c.width ? parseInt(c.width) : undefined,
-        minWidth: c.key === "sel" ? 44 : c.minWidth || (c.width ? parseInt(c.width) : 100),
+        // A 100px floor on every column meant a 9-column panel demanded ~900px
+        // inside a ~500px card, pushing 180-380px of columns off-screen. Explicit
+        // per-column minWidths still win; this only relaxes the default so more
+        // columns fit before the grid has to scroll.
+        minWidth: c.key === "sel" ? 44 : c.minWidth || (c.width ? parseInt(c.width) : 80),
         pinned: c.pinned,
         cellRenderer: CustomCell,
         cellRendererParams: {
@@ -124,7 +139,13 @@ export function DataTable<T>({
         valueFormatter: c.sortValue
           ? undefined
           : (p) => (p.value != null && typeof p.value === "object" ? "" : (p.value ?? "")),
-        autoHeight: false,
+        // Rows size to their content. Callers render multi-line cells (an
+        // instrument name above a row of Tag chips, ~69px) which do not fit a
+        // fixed 40-48px row: the cell centres its content and clips it top and
+        // bottom, so text bled across the row borders. Fixed heights cannot work
+        // here because each caller renders different content — letting the row
+        // measure itself is the only thing that stays correct as cells change.
+        autoHeight: true,
         wrapText: false,
         suppressMovable: true,
       };
@@ -133,12 +154,33 @@ export function DataTable<T>({
     });
   }, [columns]);
 
+  // `maxHeight` is a ceiling, not a fixed height. Applying it as `height` (plus a
+  // hard 350px floor) forced a one-row broker table to reserve 382px, leaving
+  // ~290px of dead space under it. For small tables let the grid size to its
+  // content and cap it; only fall back to a fixed, virtualised viewport once
+  // there are enough rows for virtualisation to be worth having.
+  // Threshold is deliberately low. Beyond a screenful, `domLayout="autoHeight"`
+  // puts the grid's own header inside the outer scroller, so column headers
+  // scroll out of view — and rows stop being virtualised. Small dashboard panels
+  // (1-14 rows) want to shrink; a 50-row log wants a fixed viewport with a
+  // sticky header and virtualisation.
+  const rowCount = rows?.length ?? 0;
+  const fitToContent = !loading && rowCount > 0 && rowCount <= 15;
+
   return (
+    // No card chrome here. This table is section *content*: the surrounding
+    // Panel already draws the border, radius, shadow and title. Drawing them
+    // again produced a card inside a card — a section header, then a second
+    // bordered box with its own header row. The grid now sits flush inside its
+    // section, so the only header is the column header.
     <div
-      className="flex w-full flex-col overflow-hidden rounded-xl border bg-background shadow-sm"
-      style={{ height: maxHeight, minHeight: "350px" }}
+      className="flex w-full min-w-0 flex-col overflow-hidden"
+      style={fitToContent ? { maxHeight } : { height: maxHeight, minHeight: "180px" }}
     >
-      <div className="w-full flex-1" style={{ height: "100%", minHeight: 0 }}>
+      <div
+        className="w-full flex-1 overflow-auto"
+        style={fitToContent ? { minHeight: 0 } : { height: "100%", minHeight: 0 }}
+      >
         <AgGridReact
           theme={dense ? panelThemeDense : panelTheme}
           rowData={loading ? undefined : rows}
@@ -157,7 +199,7 @@ export function DataTable<T>({
             if (onRowClick && e.data != null) onRowClick(e.data);
           }}
           overlayNoRowsTemplate={`<span style="color:var(--muted-foreground);font-size:13px">${empty}</span>`}
-          domLayout="normal"
+          domLayout={fitToContent ? "autoHeight" : "normal"}
           suppressCellFocus={true}
           animateRows={false}
         />

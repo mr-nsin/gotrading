@@ -103,7 +103,11 @@ export function TerminalGrid({
       resizable: true,
       filter: true,
       minWidth: 90,
-      flex: 1,
+      // Deliberately no `flex`. Flex columns are sized to exactly consume the
+      // viewport, so the total column width can never exceed it and AG Grid
+      // never shows a horizontal scrollbar — a 14-column trading grid just
+      // squeezed every column instead. Natural widths + horizontal scroll is
+      // the correct behaviour for a dense grid.
       // Long instrument names must clip, not wrap: variable row heights would
       // break the fixed-height assumption that makes row virtualization cheap.
       wrapText: false,
