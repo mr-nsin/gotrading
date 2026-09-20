@@ -1,5 +1,5 @@
 <title>Scalper Desk Strategy</title>
-<meta name="description" content="Market research and product strategy for pivoting GoTrading into a millisecond-execution, multi-chart options scalping terminal.">
+<meta name="description" content="Consolidated market research and product strategy for GoTrading — from the initial platform audit through the millisecond-execution scalper pivot.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -79,7 +79,7 @@
   h1,h2,h3{ font-family:"Fraunces", Georgia, serif; text-wrap:balance; letter-spacing:-0.01em; color:var(--ink); }
   h1{ font-size:clamp(2.1rem, 5vw, 3rem); font-weight:600; line-height:1.08; margin:0 0 10px; }
   h2{ font-size:clamp(1.4rem, 3.2vw, 1.8rem); font-weight:600; margin:0 0 6px; }
-  h3{ font-size:1.15rem; font-weight:600; margin:0 0 8px; }
+  h3{ font-size:1.15rem; font-weight:600; margin:16px 0 8px; }
   p{ margin:0 0 14px; max-width:66ch; color:var(--ink); }
   .muted{ color:var(--muted); }
   a{ color:var(--accent); text-decoration-thickness:1px; text-underline-offset:2px; }
@@ -96,7 +96,7 @@
 
   /* TOC */
   .toc{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px 22px; margin-bottom:40px; box-shadow:var(--shadow); }
-  .toc h3{ font-family:"IBM Plex Mono", monospace; font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; font-weight:600; }
+  .toc h3{ font-family:"IBM Plex Mono", monospace; font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin:0 0 12px; font-weight:600; }
   .toc ol{ margin:0; padding-left:0; list-style:none; columns:2; column-gap:24px; }
   .toc li{ break-inside:avoid; margin-bottom:8px; font-size:0.92rem; }
   .toc a{ color:var(--ink); text-decoration:none; }
@@ -132,7 +132,7 @@
   thead th{ font-family:"IBM Plex Mono",monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); background:var(--surface-alt); font-weight:600; }
   tbody tr:last-child td{ border-bottom:none; }
   td.num, th.num{ font-family:"IBM Plex Mono",monospace; white-space:nowrap; }
-  .tag{ display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:0.68rem; padding:2px 8px; border-radius:20px; font-weight:600; letter-spacing:0.02em; }
+  .tag{ display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:0.68rem; padding:2px 8px; border-radius:20px; font-weight:600; letter-spacing:0.02em; white-space:nowrap; }
   .tag.p0{ background:var(--danger-soft); color:var(--danger); }
   .tag.p1{ background:var(--warn-soft); color:var(--warn); }
   .tag.p2{ background:var(--accent-soft); color:var(--accent); }
@@ -177,9 +177,9 @@
 <div class="page">
 
   <div class="masthead">
-    <div class="eyebrow">Product Strategy &amp; Market Research</div>
+    <div class="eyebrow">Product Strategy &amp; Market Research — Consolidated</div>
     <h1>The Compliant Speed Layer</h1>
-    <p class="thesis">Repositioning GoTrading as a millisecond-class, multi-chart options scalping terminal for India's F&amp;O traders — validated against SEBI's 2026 algo framework, the incumbent scalper tools (Sahi, OptionX, Dhan DEXT&nbsp;T3), and the physics of broker-agnostic order routing.</p>
+    <p class="thesis">Everything researched on GoTrading so far, in one document: the original platform audit and market validation, and the follow-on pivot into a millisecond-class, multi-chart options scalping terminal — checked against SEBI's 2026 algo framework, the incumbent scalper tools (Sahi, OptionX, Dhan DEXT&nbsp;T3), and the physics of broker-agnostic order routing.</p>
     <div class="meta-row">
       <span>Prepared for <b>GoTrading</b></span>
       <span>Repo: <b class="mono">D:\project\gotrading</b></span>
@@ -192,27 +192,48 @@
     <ol>
       <li><span class="n">1.</span><a href="#state">Where the product stands today</a></li>
       <li><span class="n">2.</span><a href="#market">Market context</a></li>
-      <li><span class="n">3.</span><a href="#niche">The scalping niche &amp; direct competitors</a></li>
-      <li><span class="n">4.</span><a href="#physics">The physics problem: can a platform beat a broker?</a></li>
-      <li><span class="n">5.</span><a href="#validation">Idea validation</a></li>
-      <li><span class="n">6.</span><a href="#positioning">Recommended positioning</a></li>
-      <li><span class="n">7.</span><a href="#ux">Scalper UX requirements</a></li>
-      <li><span class="n">8.</span><a href="#tech">Technical execution requirements</a></li>
-      <li><span class="n">9.</span><a href="#compliance">Compliance requirements</a></li>
-      <li><span class="n">10.</span><a href="#pricing">Pricing benchmark</a></li>
-      <li><span class="n">11.</span><a href="#roadmap">Roadmap</a></li>
-      <li><span class="n">12.</span><a href="#risks">Key risks</a></li>
+      <li><span class="n">3.</span><a href="#landscape">Broader competitive landscape</a></li>
+      <li><span class="n">4.</span><a href="#niche">The scalping niche &amp; direct competitors</a></li>
+      <li><span class="n">5.</span><a href="#physics">Can a platform beat a broker on speed?</a></li>
+      <li><span class="n">6.</span><a href="#validation">Idea validation</a></li>
+      <li><span class="n">7.</span><a href="#positioning">Recommended positioning</a></li>
+      <li><span class="n">8.</span><a href="#ux">Scalper UX requirements</a></li>
+      <li><span class="n">9.</span><a href="#tech">Technical execution requirements</a></li>
+      <li><span class="n">10.</span><a href="#compliance">Compliance requirements</a></li>
+      <li><span class="n">11.</span><a href="#pricing">Pricing benchmark</a></li>
+      <li><span class="n">12.</span><a href="#roadmap">Roadmap</a></li>
+      <li><span class="n">13.</span><a href="#risks">Key risks</a></li>
     </ol>
   </nav>
 
   <section id="state">
     <div class="section-label">01 — Codebase reality</div>
     <h2>Where the product stands today</h2>
-    <p>The repository holds two different products. The planning docs (<code>docs/01_Product_Vision.md</code>) describe an aspirational voice-trading concept — Hinglish commands parsed into multi-leg option orders via Sarvam&nbsp;AI, executed through Fyers. None of that is implemented; there is no speech, no LLM intent parser, anywhere in the code.</p>
-    <p>What's actually built, under the name <b>GoTrading</b>, is closer to what this pivot needs: a multi-broker algo dashboard with adapters for eight brokers (Zerodha, Fyers, Upstox, Dhan, Angel One, 5paisa, Aliceblue, Kotak Neo), a strategy orchestrator, a risk manager with kill-switch fields, a backtester, and a paper-trading engine (<code>VirtualTrade</code>/<code>VirtualPortfolio</code>). The frontend runs Next.js with AG Grid v36 and Recharts. By default the backend fabricates ticks and fills to keep the dashboard looking alive — real broker wiring exists but isn't the default runtime path.</p>
+    <p>The repository holds two different products. The planning docs (<code>docs/01_Product_Vision.md</code> through <code>17_AI_Context.md</code>) describe an aspirational concept called <b>"3Option"</b> — Hinglish voice commands ("Nifty 22000 straddle sell karo") parsed by an LLM into multi-leg option orders via Sarvam&nbsp;AI, executed through Fyers. None of that is implemented; there is no speech capture, no STT/TTS, no LLM intent parser anywhere in the code — <code>backend/main.py</code> even still returns <code>"Welcome to 3Option API"</code> as its root response, a leftover from that naming.</p>
+    <p>What's actually built, under the name <b>GoTrading</b>, is a multi-broker algorithmic trading dashboard: a Next.js/AG&nbsp;Grid/Recharts frontend and a FastAPI/PostgreSQL/Redis backend, with adapters for eight brokers (Zerodha, Fyers, Upstox, Dhan, Angel One, 5paisa, Aliceblue, Kotak Neo), a strategy orchestrator running eight algo strategies (delta hedging, gamma scalping, statistical arbitrage, volatility skew, etc.), a risk manager with kill-switch fields, a backtester, and a paper-trading engine (<code>VirtualTrade</code>/<code>VirtualPortfolio</code>). By default the backend fabricates ticks, Greeks, and order fills to keep the dashboard looking alive — real broker wiring exists but isn't the default runtime path.</p>
+
+    <h3>Tech debt already flagged by the repo's own audits</h3>
+    <p>Three separate self-authored audits already sit in <code>docs/review/</code>, <code>docs/CODE_ANALYSIS_REPORT.md</code>, and <code>docs/MULTI_EXPERT_ANALYSIS_REPORT.md</code>. Their findings matter directly to any pivot, because a scalping terminal amplifies every one of these by pushing order volume and tick frequency far higher than a slower systematic-strategy dashboard would.</p>
+    <div class="twrap">
+      <table>
+        <thead><tr><th>Priority</th><th>Issue</th><th>Where</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag p0">P0</span></td><td>Money stored as floats, not Decimal — rounding-error risk on every fill and P&amp;L calc</td><td class="mono">backend/models.py</td></tr>
+          <tr><td><span class="tag p0">P0</span></td><td>Risk-manager cache mutated without a lock while read concurrently — race condition under burst tick load</td><td class="mono">backend/engine/risk_manager.py</td></tr>
+          <tr><td><span class="tag p1">P1</span></td><td>Orchestrator swallows strategy exceptions silently — a strategy can die with no alert</td><td class="mono">backend/engine/orchestrator.py</td></tr>
+          <tr><td><span class="tag p1">P1</span></td><td>Synchronous DB session used inside an async threadpool — blocks threads 4–20ms per refresh</td><td class="mono">backend/engine/risk_manager.py</td></tr>
+          <tr><td><span class="tag p1">P1</span></td><td>No startup reconciliation against live broker positions/orders — DB is trusted blindly on restart</td><td class="mono">backend/engine/orchestrator.py</td></tr>
+          <tr><td><span class="tag p1">P1</span></td><td>No order state machine — orders jump straight to "PLACED" with no PENDING→SUBMITTED→ACCEPTED→FILLED lifecycle</td><td class="mono">backend/models.py</td></tr>
+          <tr><td><span class="tag p1">P1</span></td><td>No per-symbol locking — concurrent strategies can race on the same instrument</td><td class="mono">backend/engine/orchestrator.py</td></tr>
+          <tr><td><span class="tag p2">P2</span></td><td>Greeks/indicator math runs via <code>asyncio.to_thread</code>, not true parallelism — GIL-bound under load</td><td class="mono">backend/engine/</td></tr>
+          <tr><td><span class="tag p2">P2</span></td><td>No automated test suite — only ad hoc manual scripts, no property-based or replay tests</td><td class="mono">backend/test_*.py</td></tr>
+        </tbody>
+      </table>
+    </div>
+
     <div class="callout">
       <span class="k">Why this matters for a scalper pivot</span>
-      <p>The multi-broker adapter layer, risk engine, and paper-trading models are the hard, reusable parts of a scalping terminal — building those from zero is most of the effort. The gap is entirely in execution UX (ladder, hotkeys, multi-chart) and in the low-latency data path (MessagePack is already a dependency but isn't used for true tick streaming yet).</p>
+      <p>The multi-broker adapter layer, risk engine, and paper-trading models are the hard, reusable parts of a scalping terminal — building those from zero is most of the effort. The gap is in execution UX (ladder, hotkeys, multi-chart) and in the low-latency data path (MessagePack is already a dependency but isn't used for true tick streaming yet). The tech-debt table above is not optional cleanup — a scalper drives far more orders/sec and ticks/sec through exactly the code paths flagged as unsafe.</p>
     </div>
   </section>
 
@@ -251,12 +272,34 @@
     </div>
 
     <p>One new development changes the calculus for a speed-focused product specifically: SEBI has proposed removing the rule that restricts Direct Market Access (DMA) to institutional clients, opening the door for retail investors to eventually get DMA-level order paths. NSE cash-segment DMA volume already hit 4.7% in May 2026, a nine-month high. This is a live tailwind for "faster execution" as a category — but it is a proposal in progress, not yet a right any retail platform can build on.</p>
+
+    <h3>Internal sizing (unverified against third-party data)</h3>
+    <p>The product team's own planning doc (<code>docs/02_Market_Research.md</code>) estimates a TAM of 10M+ active F&amp;O traders in India, a SAM of ~2M tech-savvy traders on discount brokers, and a SOM of 10,000 paid subscribers in Year 1. These are internal working assumptions, not independently sourced — and given the FY26 SEBI data above, the TAM figure should be read as trending down, not flat, since it predates the confirmed 20% YoY drop in active F&amp;O traders.</p>
+  </section>
+
+  <section id="landscape">
+    <div class="section-label">03 — Category context</div>
+    <h2>Broader competitive landscape</h2>
+    <p>Before narrowing to scalping specifically, this is the general options-trading tooling category GoTrading was first benchmarked against. None of these five are built for scalping speed, but they define the baseline expectations — payoff analytics, backtesting, multi-broker reach — that any new entrant is compared to by default.</p>
+    <div class="twrap">
+      <table>
+        <thead><tr><th>Platform</th><th>Strength</th><th>Weakness</th><th class="num">Price</th></tr></thead>
+        <tbody>
+          <tr><td><b>Sensibull</b></td><td>Industry-standard payoff graphs and options analytics; direct Zerodha/Upstox integration</td><td>No live algo execution — strategies are built and analysed, then placed manually or elsewhere</td><td class="num">~₹800/mo</td></tr>
+          <tr><td><b>AlgoTest</b></td><td>Full lifecycle in one place: backtest → paper trade → live automated execution</td><td>Less deep analytics than Sensibull/Opstra; rule-based rather than adaptive</td><td class="num">from ~₹299/mo (credits)</td></tr>
+          <tr><td><b>Streak</b> (Zerodha)</td><td>Easiest onboarding, native to the largest discount broker</td><td>Locked to Zerodha; not built for active scalping or automated risk controls</td><td class="num">~₹690/mo</td></tr>
+          <tr><td><b>Tradetron</b></td><td>Marketplace for user-built strategies; genuinely multi-broker</td><td>Latency complaints; outdated UI; regulatory scrutiny over marketplace claims (see §10)</td><td class="num">~₹300/mo (India)</td></tr>
+          <tr><td><b>Quantsapp / Opstra</b></td><td>Deepest IV-surface and Greeks analytics of the category</td><td>Analysis only — no execution path at all</td><td class="num">Varies</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The gap this category leaves open — reliable, broker-agnostic, risk-managed execution with real compliance built in — is exactly where GoTrading's existing multi-broker/risk-engine foundation was originally aimed. The scalping pivot narrows that same foundation toward a faster, more specific workflow rather than discarding it.</p>
   </section>
 
   <section id="niche">
-    <div class="section-label">03 — Competitive set</div>
+    <div class="section-label">04 — Competitive set</div>
     <h2>The scalping niche &amp; direct competitors</h2>
-    <p>Unlike the broader algo-platform category covered in the first pass of this research (Sensibull, AlgoTest, Streak, Tradetron — none of which are built for scalping speed), the fast-execution niche already has real, funded, paying-customer incumbents. This is a validated but contested space, not a greenfield.</p>
+    <p>Unlike the broader category above, the fast-execution niche already has real, funded, paying-customer incumbents. This is a validated but contested space, not a greenfield.</p>
 
     <div class="twrap">
       <table>
@@ -307,21 +350,21 @@
           <tr>
             <td class="mono"><b>GoTrading</b> (proposed)</td>
             <td>Broker-agnostic execution + risk layer</td>
-            <td>To be built — see §7</td>
+            <td>To be built — see §8</td>
             <td>Yes — 8 broker adapters already exist</td>
-            <td>To be defined honestly — see §4</td>
-            <td class="num">TBD — see §10</td>
+            <td>To be defined honestly — see §5</td>
+            <td class="num">TBD — see §11</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <p>Two patterns stand out. First, the fastest verified numbers (Dhan's &lt;20ms) belong to brokers executing against their <i>own</i> order management system — not to any broker-agnostic aggregator. Second, the one platform that plays GoTrading's exact hand — broker-agnostic, ladder-based, multi-broker — is OptionX, already three years into building this specific niche with 13+ broker integrations and a live paper-trading product.</p>
+    <p>Two patterns stand out. First, the fastest verified numbers (Dhan's &lt;20ms) belong to brokers executing against their <i>own</i> order management system — not to any broker-agnostic aggregator. Second, the one platform that plays GoTrading's exact hand — broker-agnostic, ladder-based, multi-broker — is OptionX, already well into building this specific niche with 13+ broker integrations and a live paper-trading product.</p>
   </section>
 
   <section id="physics">
-    <div class="section-label">04 — Architecture constraint</div>
-    <h2>The physics problem: can a platform beat a broker?</h2>
+    <div class="section-label">05 — Architecture constraint</div>
+    <h2>Can a platform beat a broker on speed?</h2>
     <p>Before setting feature requirements, one architectural fact has to be settled, because it determines whether "millisecond execution" is a credible claim or a marketing trap.</p>
     <p>A broker-agnostic platform sends an order to the broker's own API, which then submits it to the exchange. Every hop — app → GoTrading backend → broker API → broker's OMS → exchange — adds latency that a vertically integrated broker (Dhan, Fyers) simply doesn't have, because their app talks directly to their own OMS. No amount of clever engineering on GoTrading's side removes that extra network hop.</p>
 
@@ -359,8 +402,13 @@
   </section>
 
   <section id="validation">
-    <div class="section-label">05 — Verdict</div>
+    <div class="section-label">06 — Verdict</div>
     <h2>Idea validation</h2>
+
+    <h3>The original thesis, revisited</h3>
+    <p>The first pass of this research validated the underlying platform — multi-broker, risk-managed, compliance-first algorithmic execution — against the same market data used throughout this document. Two conclusions from that pass still hold and frame everything below: a systematic, risk-first platform rides the same regulatory tailwind as SEBI's new algo framework, while a mass-market "make speculative options trading faster and easier" pitch fights the tide of a shrinking, loss-making retail F&amp;O population. The scalper pivot has to inherit the first instinct and avoid the second.</p>
+
+    <h3>The scalper pivot, specifically</h3>
     <div class="flist">
       <li><span class="tag p2">Validated</span><div class="body"><b>Demand for fast, ladder-style execution is real and already monetised.</b><span>OptionX charges up to ₹2,199/month and Sahi has built a whole broker around scalper UX — traders pay for this today.</span></div></li>
       <li><span class="tag p2">Validated</span><div class="body"><b>Multi-chart, single-screen layouts are the expected UX, not a novelty.</b><span>Sahi's Scalper 2.0 (index + CE + PE + chain + P&amp;L on one screen) and OptionX's ladder-centric layout confirm the pattern the user described is now table stakes for this category.</span></div></li>
@@ -373,7 +421,7 @@
   </section>
 
   <section id="positioning">
-    <div class="section-label">06 — Strategy</div>
+    <div class="section-label">07 — Strategy</div>
     <h2>Recommended positioning</h2>
     <p>Position GoTrading as the scalping terminal built for traders who got burned twice — once by slow, laggy broker apps, and once by a strategy that blew past its own risk limits because nothing was watching. Speed and safety, in one terminal, is the wedge neither camp currently owns:</p>
     <div class="twrap">
@@ -382,15 +430,19 @@
         <tbody>
           <tr><td><b>OptionX / Sahi / Dhan</b></td><td class="num">Strong</td><td class="num">Minimal — basic SL only</td></tr>
           <tr><td><b>Sensibull / AlgoTest</b></td><td class="num">Not built for scalping</td><td class="num">Moderate (analytics-driven)</td></tr>
-          <tr><td><b>GoTrading (target)</b></td><td class="num">Competitive (see §4)</td><td class="num">Strong — kill switch, daily loss limits, circuit breaker, Algo-ID compliance</td></tr>
+          <tr><td><b>GoTrading (target)</b></td><td class="num">Competitive (see §5)</td><td class="num">Strong — kill switch, daily loss limits, circuit breaker, Algo-ID compliance</td></tr>
         </tbody>
       </table>
     </div>
     <p><b>Target user:</b> not the mass-market casual F&amp;O punter (a shrinking, loss-making population SEBI is actively discouraging), but the semi-professional scalper and small systematic desk who trades daily volume, already knows what a price ladder is, and has been asking for a kill switch that actually works. Smaller, stickier, higher willingness-to-pay segment than the broad retail pool.</p>
+    <div class="callout">
+      <span class="k">Secondary track worth keeping open</span>
+      <p>The original research also surfaced a B2B angle: sell the same multi-broker execution + risk + Algo-ID compliance layer as infrastructure to smaller brokers and RIAs who are now legally on the hook under SEBI's framework but under-resourced to build it. It doesn't compete with the scalper terminal for engineering effort — it's the same backend, a different front door — and is worth revisiting once the B2C product has proven reliability.</p>
+    </div>
   </section>
 
   <section id="ux">
-    <div class="section-label">07 — Product requirements</div>
+    <div class="section-label">08 — Product requirements</div>
     <h2>Scalper UX requirements</h2>
     <p>What "two charts on one screen" turns into as a full scalper workspace, benchmarked against Sahi Scalper 2.0 and OptionX:</p>
 
@@ -421,26 +473,29 @@
       <li><span class="tag p1">P1</span><div class="body"><b>Sub-second tick charts</b><span>5s/10s/15s candle intervals on index and option charts, replacing Recharts (already flagged in the repo's own audit as unsuited to tick density) with TradingView Lightweight Charts or uPlot.</span></div></li>
       <li><span class="tag p1">P1</span><div class="body"><b>One-click hedge &amp; basket templates</b><span>Pre-built straddle/strangle/spread tickets that fire as a single click, not four separate leg orders.</span></div></li>
       <li><span class="tag p1">P1</span><div class="body"><b>Automated trailing stop-loss</b><span>Server-side trailing SL that survives an app close or connection drop — client-side-only SL is a known failure mode in this category.</span></div></li>
-      <li><span class="tag p2">P2</span><div class="body"><b>Cross-broker latency indicator</b><span>Show the user, per broker, live round-trip time to order-ack — turns the physics constraint from §4 into an honest, differentiating transparency feature instead of a hidden weakness.</span></div></li>
+      <li><span class="tag p2">P2</span><div class="body"><b>Cross-broker latency indicator</b><span>Show the user, per broker, live round-trip time to order-ack — turns the physics constraint from §5 into an honest, differentiating transparency feature instead of a hidden weakness.</span></div></li>
     </ul>
   </section>
 
   <section id="tech">
-    <div class="section-label">08 — Engineering requirements</div>
+    <div class="section-label">09 — Engineering requirements</div>
     <h2>Technical execution requirements</h2>
-    <p>To make the UX in §7 feel instant within the physics constraint from §4, the data and order path need real changes, not just UI polish:</p>
+    <p>To make the UX in §8 feel instant within the physics constraint from §5, the data and order path need real changes, not just UI polish — several of these close the P0/P1 gaps already catalogued in §1:</p>
     <ul class="flist">
+      <li><span class="tag p0">P0</span><div class="body"><b>Decimal-safe money and a real order state machine</b><span>Replace float-based amounts and the direct-to-"PLACED" order flow with Decimal types and a PENDING→SUBMITTED→ACCEPTED→FILLED lifecycle — non-negotiable before higher order volume touches real capital.</span></div></li>
       <li><span class="tag p0">P0</span><div class="body"><b>True WebSocket tick streaming with MessagePack payloads</b><span>The dependency already exists (<code>@msgpack/msgpack</code>) but isn't wired into a real streaming path yet — replace React Query polling with persistent WS + binary frames for LTP, depth, and P&amp;L.</span></div></li>
       <li><span class="tag p0">P0</span><div class="body"><b>Isolate the WS ingestion loop from strategy/business logic</b><span>Use a ring buffer between the tick feed and any downstream processing so a slow consumer never blocks the socket callback thread — the repo's own audit flags this exact backpressure risk in <code>fyers_stream.py</code>.</span></div></li>
       <li><span class="tag p0">P0</span><div class="body"><b>Pre-validated, one-shot order submission</b><span>Risk checks (margin, position limits) run client-side optimistically against a cached snapshot, then confirmed server-side — avoids a synchronous DB round trip sitting in the critical path of every scalp order.</span></div></li>
+      <li><span class="tag p1">P1</span><div class="body"><b>Startup reconciliation against live broker state</b><span>Pull actual positions/orders from each connected broker on restart instead of trusting the local DB, closing the reconciliation gap flagged in §1.</span></div></li>
+      <li><span class="tag p1">P1</span><div class="body"><b>Per-symbol locking across concurrent strategies</b><span>Prevents two strategies (or a strategy and a manual scalp) from racing on the same instrument's order flow.</span></div></li>
       <li><span class="tag p1">P1</span><div class="body"><b>Move Greeks/indicator math off the Python GIL</b><span>The repo's own Rust-migration proposal (<code>docs/review/03-rust-migration.md</code>) is directly relevant here — real-time Greeks recompute on every tick is exactly the workload that benefits from a PyO3 extension instead of <code>asyncio.to_thread</code>.</span></div></li>
       <li><span class="tag p1">P1</span><div class="body"><b>WebSocket reconnection with gap-fill</b><span>On reconnect, backfill missed ticks from the broker's REST snapshot before resuming the stream — silent gaps during a scalp are a direct P&amp;L risk.</span></div></li>
-      <li><span class="tag p2">P2</span><div class="body"><b>Latency telemetry per broker, per order</b><span>Log click-to-ack time per broker adapter; feeds both the §7 transparency feature and internal SLA monitoring.</span></div></li>
+      <li><span class="tag p2">P2</span><div class="body"><b>Latency telemetry per broker, per order</b><span>Log click-to-ack time per broker adapter; feeds both the §8 transparency feature and internal SLA monitoring.</span></div></li>
     </ul>
   </section>
 
   <section id="compliance">
-    <div class="section-label">09 — Non-negotiable</div>
+    <div class="section-label">10 — Non-negotiable</div>
     <h2>Compliance requirements</h2>
     <p>SEBI's retail algo trading framework became fully mandatory on April 1, 2026. A scalping terminal generates order volume fast enough to hit its thresholds quickly, which makes this section P0 ahead of any UX work, not after it.</p>
     <ul class="flist">
@@ -457,7 +512,7 @@
   </section>
 
   <section id="pricing">
-    <div class="section-label">10 — Benchmark</div>
+    <div class="section-label">11 — Benchmark</div>
     <h2>Pricing benchmark</h2>
     <div class="twrap">
       <table>
@@ -467,6 +522,7 @@
           <tr><td>Sensibull</td><td>Flat subscription</td><td class="num">~₹800 / month</td></tr>
           <tr><td>Streak</td><td>Flat subscription</td><td class="num">~₹690 / month</td></tr>
           <tr><td>AlgoTest</td><td>Credit-based</td><td class="num">from ~₹299 / month</td></tr>
+          <tr><td>Tradetron</td><td>Flat subscription</td><td class="num">~₹300 / month (India)</td></tr>
           <tr><td>OptionX</td><td>Tiered subscription</td><td class="num">₹999 (ladder) – ₹2,199 (pro) / month</td></tr>
           <tr><td>Dhan / Fyers terminals</td><td>Bundled with brokerage</td><td class="num">Free</td></tr>
         </tbody>
@@ -476,23 +532,25 @@
   </section>
 
   <section id="roadmap">
-    <div class="section-label">11 — Sequencing</div>
+    <div class="section-label">12 — Sequencing</div>
     <h2>Roadmap</h2>
     <div class="twrap">
       <table>
         <thead><tr><th>Phase</th><th>Focus</th><th>Key deliverables</th></tr></thead>
         <tbody>
-          <tr><td class="mono">Phase 1</td><td>Compliance &amp; data-path foundation</td><td>Algo ID + kill switch + OPS monitoring; real WS/MessagePack streaming; Decimal-safe money handling</td></tr>
+          <tr><td class="mono">Phase 0</td><td>Already in place</td><td>8 broker adapters, risk-manager scaffold, backtester, paper-trading models, no-code strategy builder</td></tr>
+          <tr><td class="mono">Phase 1</td><td>Compliance &amp; data-path foundation</td><td>Algo ID + kill switch + OPS monitoring; real WS/MessagePack streaming; Decimal-safe money and order state machine</td></tr>
           <tr><td class="mono">Phase 2</td><td>Scalper execution UX</td><td>Price ladder, hotkeys, multi-pane layout, tick-level charts</td></tr>
-          <tr><td class="mono">Phase 3</td><td>Risk differentiation</td><td>Server-side trailing SL, per-broker latency transparency, hedge/basket one-click templates</td></tr>
+          <tr><td class="mono">Phase 3</td><td>Risk differentiation</td><td>Server-side trailing SL, per-broker latency transparency, hedge/basket one-click templates, startup reconciliation</td></tr>
           <tr><td class="mono">Phase 4</td><td>Scale &amp; margin</td><td>Rust extension for Greeks/indicators off the GIL, broker failover, paper-trading-to-live conversion funnel</td></tr>
+          <tr><td class="mono">Track B <span class="tag gap">optional</span></td><td>B2B compliance-as-a-service</td><td>White-label the same execution + risk + Algo-ID layer to smaller brokers/RIAs, in parallel once B2C reliability is proven</td></tr>
         </tbody>
       </table>
     </div>
   </section>
 
   <section id="risks">
-    <div class="section-label">12 — Watch list</div>
+    <div class="section-label">13 — Watch list</div>
     <h2>Key risks</h2>
     <div class="twrap">
       <table>
@@ -503,6 +561,7 @@
           <tr><td>Shrinking, loss-making target market</td><td>Retail F&amp;O population down 20% YoY; 88% lose money</td><td>Target semi-professional scalpers and small desks, not mass-market retail</td></tr>
           <tr><td>Well-capitalised direct competitor</td><td>OptionX already has 13+ broker integrations, a mature ladder, and paper trading</td><td>Differentiate on risk controls and compliance, not feature parity alone</td></tr>
           <tr><td>User harm from faster execution</td><td>Speed without guardrails amplifies the exact behaviour driving retail losses</td><td>Ship daily loss limits and circuit breakers as defaults, not opt-ins</td></tr>
+          <tr><td>Money-correctness debt inherited from the current codebase</td><td>Float-based amounts and no order state machine, now under higher scalping order volume</td><td>Fix as Phase&nbsp;1 engineering, not deferred cleanup — see §1 and §9</td></tr>
         </tbody>
       </table>
     </div>
@@ -512,22 +571,31 @@
     <p><b>Sources</b></p>
     <ul class="src-list">
       <li><a href="https://www.angelone.in/knowledge-center/online-share-trading/sebi-algo-trading-rules">SEBI Algo Trading Rules — Angel One</a></li>
+      <li><a href="https://blog.liquide.life/sebi-algo-trading-regulations-2026/">SEBI Algo Trading Regulations 2026 — Liquide</a></li>
+      <li><a href="https://dev.to/shaktitiwari/algorithmic-trading-in-india-2026-sebis-new-framework-what-retail-traders-must-actually-do-23b5">Algorithmic Trading in India 2026 — DEV Community</a></li>
+      <li><a href="https://rhnvrm.github.io/stock-market-circulars/circulars/bse/2025/bse-2025-11-24-e6eac9e12bd239db-adherence-to-milestones-and-the-rules-related-to-retail-algo/">Retail algo milestone circular — BSE</a></li>
       <li><a href="https://www.caalley.com/news-updates/indian-news/sebi-extends-retail-algo-trading-rollout-full-compliance-by-april-2026">SEBI extends retail algo rollout — CAalley</a></li>
       <li><a href="https://tradetron.tech/blog/sebi-algo-trading-rules-in-india-2025">SEBI Algo Trading Rules — Tradetron Blog</a></li>
       <li><a href="https://openthemagazine.com/business/sebi-fo-loss-study-explained-why-9-in-10-retail-traders-lost-91685-crore-in-fy26">SEBI F&amp;O Loss Study — Open Magazine</a></li>
       <li><a href="https://www.samco.in/knowledge-center/articles/retail-traders-shrink-but-losses-mount-what-sebis-fy25-report-reveals-about-indias-fo-addiction/">Retail traders shrink, losses mount — Samco</a></li>
+      <li><a href="https://www.business-standard.com/amp/markets/news/individual-investors-shrink-20-percent-fo-segment-125070800801_1.html">Individual investors shrink 20% in F&amp;O — Business Standard</a></li>
       <li><a href="https://www.grandviewresearch.com/horizon/outlook/algorithmic-trading-market/india">India Algorithmic Trading Market Size — Grand View Research</a></li>
       <li><a href="https://www.moneylife.in/article/sebi-proposes-extending-direct-market-access-to-retail-investors-seeks-comments-on-technology-rule-changes/80877.html">SEBI proposes DMA for retail investors — Moneylife</a></li>
+      <li><a href="https://algotest.in/blog/8-best-algo-trading-platforms-in-india-2026/">8 Best Algo Trading Platforms in India 2026 — AlgoTest</a></li>
+      <li><a href="https://algotest.in/blog/tradetron-vs-sensibull-comparison/">Tradetron vs Sensibull — AlgoTest</a></li>
+      <li><a href="https://algotest.in/blog/streak-vs-sensibull/">Streak vs Sensibull — AlgoTest</a></li>
+      <li><a href="https://algotest.in/blog/best-brokers-for-algo-trading-in-india/">Best Brokers for Algo Trading in India — AlgoTest</a></li>
+      <li><a href="https://www.multibagg.ai/market-pulse/articles/broker-api-reliability-india-algos-cmpcht5mfpnqfnv0jntj5xzks">Broker API reliability for live algo trading — Multibagg</a></li>
+      <li><a href="https://stratzy.in/blog/reviews-of-algo-trading-platforms-with-backtesting/">Reviews of Algo Trading Platforms with Backtesting — Stratzy</a></li>
       <li><a href="https://www.sahi.com/">Sahi — Options &amp; Stock Trading</a></li>
       <li><a href="https://www.sahi.com/pricing">Sahi Pricing</a></li>
       <li><a href="https://optionx.trade/">OptionX — Scalping &amp; Options Trading Terminal</a></li>
       <li><a href="https://optionx.trade/features">OptionX Features</a></li>
       <li><a href="https://moneycontain.com/dhan-review-2025-best-broker-for-options-intraday-trading/">Dhan Review — Moneycontain</a></li>
       <li><a href="https://www.chittorgarh.com/article/which-is-the-best-option-scalping-terminal-in-india-a-feature-by-feature-breakdown/627/">Best Option Scalping Terminal — Chittorgarh</a></li>
-      <li><a href="https://algotest.in/blog/tradetron-vs-sensibull-comparison/">Tradetron vs Sensibull — AlgoTest</a></li>
       <li><a href="https://dev.to/mountek/building-low-latency-trading-bots-architecting-real-time-websocket-streams-1a5h">Building Low-Latency Trading Bots — DEV Community</a></li>
     </ul>
-    <p style="margin-top:18px;">Internal references: <code>docs/01_Product_Vision.md</code>, <code>docs/02_Market_Research.md</code>, <code>docs/review/SUMMARY.md</code>, <code>docs/review/03-rust-migration.md</code>, <code>backend/main.py</code>, <code>backend/engine/</code>.</p>
+    <p style="margin-top:18px;">Internal references: <code>docs/01_Product_Vision.md</code>, <code>docs/02_Market_Research.md</code>, <code>docs/14_Product_Roadmap.md</code>, <code>docs/review/SUMMARY.md</code>, <code>docs/review/03-rust-migration.md</code>, <code>docs/CODE_ANALYSIS_REPORT.md</code>, <code>backend/main.py</code>, <code>backend/models.py</code>, <code>backend/engine/</code>.</p>
   </footer>
 
 </div>
